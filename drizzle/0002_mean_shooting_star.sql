@@ -1,0 +1,1 @@
+ALTER TABLE `hero_content` ADD `cta_link` varchar(255) DEFAULT '/contato';

@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1762387793082,
+      "tag": "0000_little_brood",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1762387981035,
+      "tag": "0001_fearless_ultimates",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1762396020233,
+      "tag": "0002_mean_shooting_star",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1762396269757,
+      "tag": "0003_messy_rhino",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1762396736039,
+      "tag": "0004_unknown_rafael_vega",
+      "breakpoints": true
+    }
+  ]
+}
