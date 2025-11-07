@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerUploadRoutes } from "../upload-routes";
 import { registerConfigRoutes } from "../config-routes";
 import blogApiRouter from "../api-blog";
+import marketingConfigRouter from "../marketing-config";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -45,6 +46,9 @@ async function startServer() {
   
   // Config routes (Supabase credentials)
   registerConfigRoutes(app);
+  
+  // Marketing configuration (Meta Pixel, GA4, API Key)
+  app.use("/api", marketingConfigRouter);
   
   // Blog REST API for N8N integration
   app.use("/api/blog", blogApiRouter);
