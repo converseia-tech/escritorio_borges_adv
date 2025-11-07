@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 
   <head>
     <meta charset="UTF-8" />
@@ -9,6 +9,48 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <link rel="apple-touch-icon" href="/vite.svg" />
     <title>Borges Advogados Associados</title>
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      
+      // Substitua XXXXXXXXX pelo seu Pixel ID
+      const metaPixelId = '__META_PIXEL_ID__';
+      if (metaPixelId && metaPixelId !== '__META_PIXEL_ID__') {
+        fbq('init', metaPixelId);
+        fbq('track', 'PageView');
+        console.log('✅ Meta Pixel initialized:', metaPixelId);
+      }
+    </script>
+    <noscript>
+      <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=__META_PIXEL_ID__&ev=PageView&noscript=1"/>
+    </noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=__GA4_MEASUREMENT_ID__"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      
+      // Substitua G-XXXXXXXX pelo seu Measurement ID
+      const ga4MeasurementId = '__GA4_MEASUREMENT_ID__';
+      if (ga4MeasurementId && ga4MeasurementId !== '__GA4_MEASUREMENT_ID__') {
+        gtag('config', ga4MeasurementId);
+        console.log('✅ GA4 initialized:', ga4MeasurementId);
+      }
+    </script>
+    <!-- End Google Analytics 4 -->
+    
     <!-- Add Google Fonts here, example:
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

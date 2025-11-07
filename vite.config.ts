@@ -4,9 +4,10 @@ import fs from "node:fs";
 import path from "path";
 import { defineConfig } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+import { trackingPlugin } from "./client/vite-plugin-tracking";
 
 
-const plugins = [react(), tailwindcss(), vitePluginManusRuntime()];
+const plugins = [react(), tailwindcss(), vitePluginManusRuntime(), trackingPlugin()];
 
 export default defineConfig({
   plugins,

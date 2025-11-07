@@ -1,4 +1,5 @@
 import { useParams, Link } from "wouter";
+import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,12 +9,20 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { trackViewContent } from "@/lib/tracking";
 
 export default function BlogPost() {
   const { slug } = useParams();
   const { data: blogs } = trpc.site.getPublishedBlogs.useQuery();
   
   const blog = blogs?.find((b) => b.slug === slug);
+
+  // Rastrear visualização do conteúdo do blog
+  useEffect(() => {
+    if (blog) {
+      trackViewContent(blog.title, 'blog', blog.id.toString());
+    }
+  }, [blog]);
 
   const handleShare = () => {
     if (navigator.share) {

@@ -6,6 +6,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerUploadRoutes } from "../upload-routes";
 import { registerConfigRoutes } from "../config-routes";
+import blogApiRouter from "../api-blog";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -35,12 +36,19 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  
   // File upload routes
   registerUploadRoutes(app);
+  
   // Config routes (Supabase credentials)
   registerConfigRoutes(app);
+  
+  // Blog REST API for N8N integration
+  app.use("/api/blog", blogApiRouter);
+  
   // tRPC API
   app.use(
     "/api/trpc",

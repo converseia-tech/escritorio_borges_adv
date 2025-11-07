@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useFavicon } from "./hooks/useFavicon";
+import { usePageTracking } from "./hooks/usePageTracking";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import TeamMember from "./pages/TeamMember";
@@ -39,6 +40,9 @@ function Router() {
 function App() {
   // Gerenciar favicon dinamicamente
   useFavicon();
+  
+  // Rastrear visualizações de página automaticamente
+  usePageTracking();
 
   return (
     <ErrorBoundary>
