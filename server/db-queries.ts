@@ -98,6 +98,8 @@ export async function getAboutPage() {
     return result[0] || null;
   } catch (error) {
     console.error('[DB Query Error] getAboutPage:', error);
+    console.log('[DB Query Info] Tabela about_page pode não existir. Execute: npm run db:push');
+    // Retorna null em vez de propagar o erro
     return null;
   }
 }
@@ -124,6 +126,8 @@ export async function getSiteSettings() {
     return result[0] || null;
   } catch (error) {
     console.error('[DB Query Error] getSiteSettings:', error);
+    console.log('[DB Query Info] Tabela site_settings pode não existir. Execute: npm run db:push');
+    // Retorna null em vez de propagar o erro
     return null;
   }
 }
