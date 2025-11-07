@@ -9,9 +9,13 @@ import { Loader2, Upload, Image as ImageIcon, Save } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseServiceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
+const supabaseServiceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY || "";
+
+// Só cria o cliente Supabase se as credenciais estiverem configuradas
+const supabase = supabaseUrl && supabaseServiceRoleKey 
+  ? createClient(supabaseUrl, supabaseServiceRoleKey)
+  : null;
 
 export default function AboutPageManagement() {
   const { data: aboutPage, isLoading, refetch } = trpc.site.getAboutPage.useQuery();
@@ -42,6 +46,11 @@ export default function AboutPageManagement() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!supabase) {
+      toast.error("Supabase não está configurado. Configure VITE_SUPABASE_URL e VITE_SUPABASE_SERVICE_ROLE_KEY");
+      return;
+    }
+
     setUploadingHeroBg(true);
     try {
       const fileExt = file.name.split(".").pop();
@@ -71,6 +80,11 @@ export default function AboutPageManagement() {
   const handleHistoryImgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!supabase) {
+      toast.error("Supabase não está configurado. Configure VITE_SUPABASE_URL e VITE_SUPABASE_SERVICE_ROLE_KEY");
+      return;
+    }
 
     setUploadingHistoryImg(true);
     try {
