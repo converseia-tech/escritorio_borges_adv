@@ -105,3 +105,12 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+
+# Vercel
+.vercel
+
+# Upload directories
+uploads/
+
+# Package lock files (optional - keep package-lock.json for npm)
+# package-lock.json
