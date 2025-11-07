@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +39,7 @@ export default function SiteSettingsManagement() {
   });
 
   // Initialize form data when settings load
-  useState(() => {
+  useEffect(() => {
     if (settings) {
       // JSONB do PostgreSQL já retorna objetos, não precisa fazer JSON.parse()
       const socialMedia = settings.socialMedia as { 
@@ -62,7 +62,7 @@ export default function SiteSettingsManagement() {
         },
       });
     }
-  });
+  }, [settings]);
 
   const handleImageUpload = async (file: File, type: "logo" | "favicon") => {
     if (type === "logo") setUploadingLogo(true);
