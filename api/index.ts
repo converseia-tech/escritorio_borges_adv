@@ -1,26 +1,29 @@
-import "dotenv/config";
 import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "../server/_core/oauth";
-import { registerUploadRoutes } from "../server/upload-routes";
-import { registerConfigRoutes } from "../server/config-routes";
 import { appRouter } from "../server/routers";
 import { createContext } from "../server/_core/context";
 
 const app = express();
 
-// Configure body parser with larger size limit for file uploads
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
+// Configure body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// OAuth callback under /api/oauth/callback
-registerOAuthRoutes(app);
+// CORS headers for Vercel
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
-// File upload routes
-registerUploadRoutes(app);
-
-// Config routes (Supabase credentials)
-registerConfigRoutes(app);
+// Health check
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
 // tRPC API
 app.use(
@@ -30,6 +33,11 @@ app.use(
     createContext,
   })
 );
+
+// Catch-all for API routes
+app.use("/api/*", (req, res) => {
+  res.status(404).json({ error: "API endpoint not found" });
+});
 
 // Export the Express app as a Vercel serverless function
 export default app;
