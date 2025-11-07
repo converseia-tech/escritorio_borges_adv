@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { useFavicon } from "./hooks/useFavicon";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import TeamMember from "./pages/TeamMember";
@@ -34,6 +35,9 @@ function Router() {
 // - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
+  // Gerenciar favicon dinamicamente
+  useFavicon();
+
   return (
     <ErrorBoundary>
       <ThemeProvider
