@@ -65,8 +65,8 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
-    "esbuild": "^0.25.0",
     "embla-carousel-react": "^8.6.0",
+    "esbuild": "^0.25.0",
     "express": "^4.21.2",
     "framer-motion": "^12.23.22",
     "input-otp": "^1.4.2",
@@ -99,6 +99,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@vercel/node": "^5.5.4",
     "add": "^2.0.6",
     "drizzle-kit": "^0.31.4",
     "pnpm": "^10.15.1",
