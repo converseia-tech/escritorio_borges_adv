@@ -1,6 +1,16 @@
 {
-  "installCommand": "npm install --legacy-peer-deps",
+  "version": 2,
   "buildCommand": "npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": "dist/public",
-  "framework": null
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
