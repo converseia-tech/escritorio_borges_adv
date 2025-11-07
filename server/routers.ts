@@ -47,6 +47,10 @@ export const appRouter = router({
       const { getAboutContent } = await import("./db-queries");
       return await getAboutContent();
     }),
+    getAboutPage: publicProcedure.query(async () => {
+      const { getAboutPage } = await import("./db-queries");
+      return await getAboutPage();
+    }),
     getContactInfo: publicProcedure.query(async () => {
       const { getContactInfo } = await import("./db-queries");
       return await getContactInfo();
@@ -214,6 +218,26 @@ export const appRouter = router({
         }
         const { updateAboutContent } = await import("./db-mutations");
         return await updateAboutContent(input);
+      }),
+
+    // About Page (nova estrutura completa)
+    updateAboutPage: protectedProcedure
+      .input(
+        z.object({
+          heroTitle: z.string().optional(),
+          heroBackgroundImage: z.string().optional(),
+          historyTitle: z.string().optional(),
+          historySubtitle: z.string().optional(),
+          historyContent: z.string().optional(),
+          historyImage: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+        const { updateAboutPage } = await import("./db-mutations");
+        return await updateAboutPage(input);
       }),
 
     // Site Settings

@@ -4,7 +4,8 @@ import {
   heroContent, 
   practiceAreas, 
   teamMembers, 
-  aboutContent, 
+  aboutContent,
+  aboutPage,
   contactInfo,
   associatedLawyers,
   siteSettings,
@@ -84,6 +85,19 @@ export async function getAboutContent() {
     return result[0] || null;
   } catch (error) {
     console.error('[DB Query Error] getAboutContent:', error);
+    return null;
+  }
+}
+
+// About Page (nova estrutura)
+export async function getAboutPage() {
+  const db = await getDb();
+  if (!db) return null;
+  try {
+    const result = await db.select().from(aboutPage).limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error('[DB Query Error] getAboutPage:', error);
     return null;
   }
 }

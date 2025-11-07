@@ -9,6 +9,7 @@ import TeamManagement from "@/components/admin/TeamManagement";
 import HeroManagement from "@/components/admin/HeroManagement";
 import PracticeAreasManagement from "@/components/admin/PracticeAreasManagement";
 import AboutManagement from "@/components/admin/AboutManagement";
+import AboutPageManagement from "@/components/admin/AboutPageManagement";
 import BlogsManagement from "@/components/admin/BlogsManagement";
 import SiteSettingsManagement from "@/components/admin/SiteSettingsManagement";
 
@@ -108,7 +109,8 @@ export default function Admin() {
             <TabsTrigger value="hero">Hero Section</TabsTrigger>
             <TabsTrigger value="areas">Áreas de Atuação</TabsTrigger>
             <TabsTrigger value="equipe">Equipe</TabsTrigger>
-            <TabsTrigger value="sobre">Sobre Nós</TabsTrigger>
+            <TabsTrigger value="sobre">Sobre Nós (antigo)</TabsTrigger>
+            <TabsTrigger value="pagina-sobre">Página Sobre</TabsTrigger>
             <TabsTrigger value="blogs">Blogs</TabsTrigger>
             <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
           </TabsList>
@@ -188,9 +190,14 @@ export default function Admin() {
             <TeamManagement />
           </TabsContent>
 
-          {/* Sobre Nós Tab */}
+          {/* Sobre Nós Tab (antigo) */}
           <TabsContent value="sobre">
             <AboutManagement />
+          </TabsContent>
+
+          {/* Página Sobre Tab (nova estrutura completa) */}
+          <TabsContent value="pagina-sobre">
+            <AboutPageManagement />
           </TabsContent>
 
           {/* Blogs Tab */}

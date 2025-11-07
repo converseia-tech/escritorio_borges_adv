@@ -95,6 +95,24 @@ export const aboutContent = pgTable("about_content", {
 export type AboutContent = typeof aboutContent.$inferSelect;
 export type InsertAboutContent = typeof aboutContent.$inferInsert;
 
+// Página Sobre Nós (nova estrutura completa)
+export const aboutPage = pgTable("about_page", {
+  id: serial("id").primaryKey(),
+  // Hero Section
+  heroTitle: varchar("hero_title", { length: 200 }).notNull().default("Sobre nós"),
+  heroBackgroundImage: text("hero_background_image"),
+  // História Section
+  historyTitle: varchar("history_title", { length: 200 }).notNull().default("Conheça nossa história"),
+  historySubtitle: varchar("history_subtitle", { length: 300 }),
+  historyContent: text("history_content").notNull(),
+  historyImage: text("history_image"), // Imagem da equipe
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type AboutPage = typeof aboutPage.$inferSelect;
+export type InsertAboutPage = typeof aboutPage.$inferInsert;
+
 // Informações de Contato
 export const contactInfo = pgTable("contact_info", {
   id: serial("id").primaryKey(),

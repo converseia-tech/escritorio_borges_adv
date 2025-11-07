@@ -5,6 +5,7 @@ import {
   practiceAreas,
   teamMembers,
   aboutContent,
+  aboutPage,
   contactInfo,
   associatedLawyers,
   siteSettings,
@@ -158,6 +159,35 @@ export async function updateAboutContent(data: {
       .update(aboutContent)
       .set({ ...data, updatedAt: new Date() })
       .where(eq(aboutContent.id, existing[0].id));
+    return result;
+  }
+}
+
+// =====================================================
+// ABOUT PAGE MUTATIONS (nova estrutura)
+// =====================================================
+
+export async function updateAboutPage(data: {
+  heroTitle?: string;
+  heroBackgroundImage?: string;
+  historyTitle?: string;
+  historySubtitle?: string;
+  historyContent?: string;
+  historyImage?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await db.select().from(aboutPage).limit(1);
+
+  if (existing.length === 0) {
+    const result = await db.insert(aboutPage).values(data as any);
+    return result;
+  } else {
+    const result = await db
+      .update(aboutPage)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(aboutPage.id, existing[0].id));
     return result;
   }
 }

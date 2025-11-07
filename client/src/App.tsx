@@ -11,12 +11,14 @@ import TeamMember from "./pages/TeamMember";
 import PracticeAreaDetail from "./pages/PracticeAreaDetail";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import About from "./pages/About";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/sobre"} component={About} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/equipe/:id"} component={TeamMember} />
       <Route path={"/area/:slug"} component={PracticeAreaDetail} />

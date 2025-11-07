@@ -44,11 +44,11 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <a href="/#sobre-nos">
+            <Link href="/sobre">
               <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide">
                 SOBRE NÓS
               </span>
-            </a>
+            </Link>
 
             {/* Áreas de Atuação Dropdown */}
             <div 
