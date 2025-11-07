@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "../server/routers";
 import { createContext } from "../server/_core/context";
@@ -21,8 +21,16 @@ app.use((req, res, next) => {
 });
 
 // Health check
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+app.get("/api/health", (req: Request, res: Response) => {
+  res.json({ 
+    status: "ok", 
+    timestamp: new Date().toISOString(),
+    env: {
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      hasSupabaseUrl: !!process.env.SUPABASE_URL,
+      nodeEnv: process.env.NODE_ENV
+    }
+  });
 });
 
 // tRPC API
@@ -34,9 +42,18 @@ app.use(
   })
 );
 
-// Catch-all for API routes
-app.use("/api/*", (req, res) => {
-  res.status(404).json({ error: "API endpoint not found" });
+// Root handler
+app.get("/api", (req: Request, res: Response) => {
+  res.json({ message: "Borges Advogados API" });
+});
+
+// Error handler
+app.use((err: Error, req: Request, res: Response, next: Function) => {
+  console.error("[API Error]", err);
+  res.status(500).json({ 
+    error: "Internal Server Error",
+    message: err.message 
+  });
 });
 
 // Export the Express app as a Vercel serverless function
