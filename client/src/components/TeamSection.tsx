@@ -56,33 +56,74 @@ export default function TeamSection() {
 
           {/* Team Members Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-16">
-            {displayedMembers.map((member) => (
-              <div key={member.id} className="relative group">
-                <div className="aspect-[3/4] bg-gray-800 overflow-hidden">
-                  {member.image ? (
-                    <img 
-                      src={member.image} 
-                      alt={`${member.name} - ${member.position}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900">
-                      <div className="text-center">
-                        <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
-                          <span className="text-primary text-4xl font-bold">
-                            {member.name.charAt(0)}
-                          </span>
+            {displayedMembers.map((member, index) => {
+              const isMiddle = index === 1; // Membro do meio
+              return (
+                <div 
+                  key={member.id} 
+                  className={`relative group transition-all duration-500 ${
+                    isMiddle ? 'md:scale-110 md:z-10' : 'md:scale-100'
+                  }`}
+                >
+                  <div className={`aspect-[3/4] bg-gray-800 overflow-hidden rounded-lg shadow-2xl transition-all duration-500 ${
+                    isMiddle 
+                      ? 'ring-4 ring-yellow-500/50 group-hover:ring-yellow-500 group-hover:ring-8 group-hover:scale-105' 
+                      : 'group-hover:scale-105 group-hover:ring-4 group-hover:ring-yellow-500/30'
+                  }`}>
+                    {member.image ? (
+                      <img 
+                        src={member.image} 
+                        alt={`${member.name} - ${member.position}`}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900">
+                        <div className="text-center">
+                          <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
+                            <span className="text-primary text-4xl font-bold">
+                              {member.name.charAt(0)}
+                            </span>
+                          </div>
                         </div>
+                      </div>
+                    )}
+                    {/* Overlay brilhante no hover */}
+                    <div className={`absolute inset-0 bg-gradient-to-t from-yellow-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
+                      isMiddle ? 'opacity-30 group-hover:opacity-60' : ''
+                    }`} />
+                  </div>
+                  <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-6 rounded-b-lg transition-all duration-500 ${
+                    isMiddle ? 'group-hover:from-yellow-600/30 group-hover:via-black/90' : 'group-hover:from-yellow-600/20'
+                  }`}>
+                    <h3 className={`text-white text-xl font-serif mb-1 transition-colors duration-300 ${
+                      isMiddle ? 'text-2xl font-bold group-hover:text-yellow-400' : 'group-hover:text-yellow-400'
+                    }`}>
+                      {member.name}
+                    </h3>
+                    <p className={`text-gray-300 text-sm transition-colors duration-300 ${
+                      isMiddle ? 'text-base group-hover:text-yellow-200' : 'group-hover:text-yellow-200'
+                    }`}>
+                      {member.position}
+                    </p>
+                    {member.oab && (
+                      <p className={`text-gray-400 text-xs mt-1 transition-colors duration-300 ${
+                        isMiddle ? 'group-hover:text-yellow-300' : 'group-hover:text-yellow-300'
+                      }`}>
+                        OAB: {member.oab}
+                      </p>
+                    )}
+                  </div>
+                  {/* Badge especial para o membro do meio */}
+                  {isMiddle && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
+                      <div className="bg-yellow-500 text-black px-4 py-1 rounded-full text-xs font-bold shadow-lg">
+                        EM DESTAQUE
                       </div>
                     </div>
                   )}
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
-                  <h3 className="text-white text-xl font-serif mb-1">{member.name}</h3>
-                  <p className="text-gray-300 text-sm">{member.position}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

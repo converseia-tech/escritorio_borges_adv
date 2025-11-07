@@ -5,29 +5,36 @@ export default function HeroSection() {
   const { data: heroContent } = trpc.site.getHeroContent.useQuery();
 
   return (
-    <section className="relative min-h-screen flex items-center">
+    <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         {heroContent?.backgroundImage ? (
           <img 
             src={heroContent.backgroundImage} 
             alt="Borges Advogados Associados - Equipe"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover scale-105 animate-slow-zoom"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
         )}
-        <div className="absolute inset-0 bg-black/60" />
+        {/* Gradient overlays modernos */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
       </div>
 
-      {/* Main Content - Aligned Left */}
+      {/* Efeito de brilho animado */}
+      <div className="absolute inset-0 z-[5] pointer-events-none">
+        <div className="absolute -left-1/4 top-1/4 w-1/2 h-1/2 bg-yellow-500/10 blur-[100px] rounded-full animate-pulse-slow" />
+      </div>
+
+      {/* Main Content - Aligned Left com backdrop blur */}
       <div className="relative z-10 px-6 md:px-12 lg:px-24 max-w-7xl w-full">
-        <div className="max-w-3xl">
-          <p className="text-yellow-500 text-base md:text-lg mb-4 tracking-widest font-semibold">
+        <div className="max-w-3xl backdrop-blur-sm bg-black/20 p-8 md:p-12 rounded-2xl border border-white/10 shadow-2xl">
+          <p className="text-yellow-500 text-base md:text-lg mb-4 tracking-widest font-semibold drop-shadow-lg">
             SEJA BEM-VINDO À
           </p>
           
-          <h1 className="text-white mb-2">
+          <h1 className="text-white mb-2 drop-shadow-2xl">
             <span className="block text-5xl md:text-7xl lg:text-8xl font-serif font-bold">
               Borges
             </span>
@@ -36,13 +43,13 @@ export default function HeroSection() {
             </span>
           </h1>
           
-          <p className="text-white text-lg md:text-xl lg:text-2xl mb-8 mt-6 leading-relaxed">
+          <p className="text-white text-lg md:text-xl lg:text-2xl mb-8 mt-6 leading-relaxed drop-shadow-lg">
             {heroContent?.subtitle || "Transformando desafios jurídicos complexos em soluções eficazes e personalizadas"}
           </p>
           
           <Button 
             size="lg"
-            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-base px-8 py-6 tracking-wider border-2 border-yellow-500 hover:border-yellow-600 transition-all shadow-lg"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-base px-8 py-6 tracking-wider border-2 border-yellow-500 hover:border-yellow-600 transition-all shadow-xl hover:shadow-2xl hover:scale-105 hover:shadow-yellow-500/50"
             asChild
           >
             <a href={heroContent?.ctaLink || "/#contato"}>

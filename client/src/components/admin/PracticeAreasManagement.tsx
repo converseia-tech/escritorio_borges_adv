@@ -7,7 +7,48 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Plus, Edit, Trash2 } from "lucide-react";
+import { 
+  Loader2, 
+  Plus, 
+  Edit, 
+  Trash2,
+  Building2, 
+  Users, 
+  Briefcase, 
+  ShoppingCart, 
+  Shield,
+  Scale,
+  Home,
+  Heart,
+  FileText,
+  Landmark,
+  Car,
+  Banknote,
+  HandshakeIcon,
+  UserCheck,
+  Baby,
+  Coins
+} from "lucide-react";
+
+// Ícones disponíveis com labels
+const availableIcons = [
+  { value: "bank", label: "Banco", Icon: Building2 },
+  { value: "users", label: "Pessoas", Icon: Users },
+  { value: "briefcase", label: "Maleta", Icon: Briefcase },
+  { value: "shopping-cart", label: "Consumidor", Icon: ShoppingCart },
+  { value: "shield", label: "Escudo", Icon: Shield },
+  { value: "scale", label: "Balança (Direito)", Icon: Scale },
+  { value: "home", label: "Casa/Imóveis", Icon: Home },
+  { value: "heart", label: "Coração/Saúde", Icon: Heart },
+  { value: "file-text", label: "Documento", Icon: FileText },
+  { value: "landmark", label: "Edifício Público", Icon: Landmark },
+  { value: "car", label: "Carro/Trânsito", Icon: Car },
+  { value: "banknote", label: "Dinheiro", Icon: Banknote },
+  { value: "handshake", label: "Acordo", Icon: HandshakeIcon },
+  { value: "user-check", label: "Trabalhista", Icon: UserCheck },
+  { value: "baby", label: "Família", Icon: Baby },
+  { value: "coins", label: "Previdenciário", Icon: Coins },
+];
 
 export default function PracticeAreasManagement() {
   const { data: areas, isLoading, refetch } = trpc.site.getPracticeAreas.useQuery();
@@ -190,14 +231,31 @@ export default function PracticeAreasManagement() {
 
               <div className="space-y-2">
                 <Label htmlFor="icon">Ícone</Label>
-                <Input
-                  id="icon"
-                  value={formData.icon}
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                  placeholder="briefcase, users, shield, etc."
-                />
+                <div className="grid grid-cols-4 gap-3 p-4 border rounded-lg bg-gray-50">
+                  {availableIcons.map(({ value, label, Icon }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, icon: value })}
+                      className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                        formData.icon === value
+                          ? 'border-yellow-500 bg-yellow-50 shadow-md scale-105'
+                          : 'border-gray-200 bg-white hover:border-yellow-300 hover:bg-yellow-50'
+                      }`}
+                    >
+                      <Icon className={`h-8 w-8 ${
+                        formData.icon === value ? 'text-yellow-600' : 'text-gray-600'
+                      }`} />
+                      <span className={`text-xs text-center leading-tight ${
+                        formData.icon === value ? 'text-yellow-600 font-semibold' : 'text-gray-600'
+                      }`}>
+                        {label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
                 <p className="text-xs text-gray-500">
-                  Ícones disponíveis: bank, users, briefcase, shopping-cart, shield
+                  Selecione o ícone que melhor representa esta área de atuação
                 </p>
               </div>
 
