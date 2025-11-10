@@ -11,14 +11,26 @@ import {
   siteSettings,
   blogs
 } from "../drizzle/schema-pg";
+import { queryCache, CacheTTL } from "./query-cache";
 
 // Hero Content
 export async function getHeroContent() {
+  // Try cache first
+  const cached = queryCache.get<any>('hero_content');
+  if (cached) return cached;
+
   const db = await getDb();
   if (!db) return null;
   try {
     const result = await db.select().from(heroContent).limit(1);
-    return result[0] || null;
+    const data = result[0] || null;
+    
+    // Cache for 5 minutes
+    if (data) {
+      queryCache.set('hero_content', data, CacheTTL.MEDIUM);
+    }
+    
+    return data;
   } catch (error) {
     console.error('[DB Query Error] getHeroContent:', error);
     return null;
@@ -27,6 +39,10 @@ export async function getHeroContent() {
 
 // Practice Areas
 export async function getPracticeAreas() {
+  // Try cache first
+  const cached = queryCache.get<any[]>('practice_areas');
+  if (cached) return cached;
+
   const db = await getDb();
   if (!db) {
     console.log('[DB Query] Database not available');
@@ -36,6 +52,10 @@ export async function getPracticeAreas() {
     console.log('[DB Query] Fetching practice areas...');
     const results = await db.select().from(practiceAreas).orderBy(asc(practiceAreas.displayOrder));
     console.log('[DB Query] Found', results.length, 'practice areas');
+    
+    // Cache for 5 minutes
+    queryCache.set('practice_areas', results, CacheTTL.MEDIUM);
+    
     return results;
   } catch (error) {
     console.error('[DB Query Error] getPracticeAreas:', error);

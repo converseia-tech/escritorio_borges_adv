@@ -8,6 +8,7 @@ import { registerUploadRoutes } from "../upload-routes";
 import { registerConfigRoutes } from "../config-routes";
 import blogApiRouter from "../api-blog";
 import marketingConfigRouter from "../marketing-config";
+import supabaseTestRouter from "../supabase-test";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -46,6 +47,9 @@ async function startServer() {
   
   // Config routes (Supabase credentials)
   registerConfigRoutes(app);
+  
+  // Supabase connection test
+  app.use("/api", supabaseTestRouter);
   
   // Marketing configuration (Meta Pixel, GA4, API Key)
   app.use("/api", marketingConfigRouter);

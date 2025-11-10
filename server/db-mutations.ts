@@ -11,6 +11,7 @@ import {
   siteSettings,
   blogs,
 } from "../drizzle/schema-pg";
+import { queryCache } from "./query-cache";
 
 // =====================================================
 // HERO CONTENT MUTATIONS
@@ -27,6 +28,9 @@ export async function updateHeroContent(data: {
   if (!db) throw new Error("Database not available");
 
   const existing = await db.select().from(heroContent).limit(1);
+
+  // Invalidate cache
+  queryCache.invalidate('hero_content');
 
   if (existing.length === 0) {
     const result = await db.insert(heroContent).values(data as any);
@@ -55,6 +59,8 @@ export async function createPracticeArea(data: {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
+  queryCache.invalidate('practice_areas'); // Invalidate cache
+  
   const result = await db.insert(practiceAreas).values(data as any);
   return result;
 }
@@ -72,6 +78,8 @@ export async function updatePracticeArea(
 ) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
+
+  queryCache.invalidate('practice_areas'); // Invalidate cache
 
   const result = await db
     .update(practiceAreas)
