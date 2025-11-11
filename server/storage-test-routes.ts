@@ -7,9 +7,9 @@ export function registerSupabaseTestRoutes(app: Express) {
     try {
       console.log("[Storage Test] 🧪 Testando conexão com Supabase Storage...");
       
-      // 1. Verificar variáveis de ambiente
-      const supabaseUrl = process.env.VITE_SUPABASE_URL;
-      const supabaseKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+      // 1. Verificar variáveis de ambiente (SEM VITE_ no backend!)
+      const supabaseUrl = process.env.SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
       
       console.log("[Storage Test] 📋 Credenciais:");
       console.log("- URL:", supabaseUrl ? "✅ Configurada" : "❌ Não configurada");
@@ -28,7 +28,6 @@ export function registerSupabaseTestRoutes(app: Express) {
           details: bucketsError
         });
       }
-      
       console.log("[Storage Test] 📦 Buckets encontrados:", buckets?.length || 0);
       buckets?.forEach(bucket => {
         console.log(`  - ${bucket.name} (${bucket.public ? 'público' : 'privado'})`);

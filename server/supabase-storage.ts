@@ -1,16 +1,29 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase client para Storage
-const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://qzcdkfaaivwpfdpxchpl.supabase.co';
-const supabaseKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6Y2RrZmFhaXZ3cGZkcHhjaHBsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMDc1NzU5OSwiZXhwIjoyMDQ2MzMzNTk5fQ.1YJMN01hl9CXcOhpJOz33FdpxQFDy5yFdqfHWWWfMiQ';
+// ⚠️ IMPORTANTE: Backend usa variáveis SEM VITE_ prefix!
+// VITE_ = Frontend (React) | SEM VITE_ = Backend (Node.js)
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 // Verificar se as credenciais estão configuradas
 if (!supabaseUrl || !supabaseKey) {
-  console.error('[Supabase Storage] ERRO: Variáveis de ambiente não configuradas!');
-  console.error('[Supabase Storage] Configure VITE_SUPABASE_URL e VITE_SUPABASE_SERVICE_ROLE_KEY no arquivo .env');
+  console.error('[Supabase Storage] ❌ ERRO: Variáveis de ambiente não configuradas!');
+  console.error('[Supabase Storage] Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no arquivo .env');
+  console.error('[Supabase Storage] (SEM o prefixo VITE_ - isso é backend Node.js!)');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// ✅ Criar cliente Supabase com SERVICE_ROLE_KEY (bypass RLS)
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
+
+console.log('[Supabase Storage] ✅ Cliente inicializado com SERVICE_ROLE_KEY');
+console.log('[Supabase Storage] URL:', supabaseUrl);
+
+export { supabase, supabaseUrl, supabaseKey };
 
 /**
  * Upload de arquivo para Supabase Storage
@@ -25,9 +38,8 @@ export async function uploadToSupabase(
   bucket: string = 'images'
 ): Promise<{ url: string; path: string }> {
   // Verificar se Supabase está configurado
-  if (!supabaseUrl || !supabaseKey || supabaseKey.includes('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6Y2RrZmFhaXZ3cGZkcHhjaHBsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMDc1NzU5OSwiZXhwIjoyMDQ2MzMzNTk5fQ')) {
-    // Usar a chave hardcoded como fallback
-    console.log('[Supabase Storage] Usando credenciais do ambiente');
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase não configurado! Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no .env');
   }
   
   try {
@@ -38,42 +50,45 @@ export async function uploadToSupabase(
     const uniqueFileName = `${timestamp}-${randomString}.${fileExtension}`;
     const filePath = `uploads/${uniqueFileName}`;
 
-    console.log(`[Supabase Storage] Iniciando upload: ${filePath} para bucket: ${bucket}`);
+    console.log(`[Supabase Storage] 📤 Upload iniciado`);
+    console.log(`[Supabase Storage] 📄 Arquivo: ${filePath}`);
+    console.log(`[Supabase Storage] 🗂️  Bucket: ${bucket}`);
+    console.log(`[Supabase Storage] 🔑 Usando: SERVICE_ROLE_KEY (bypass RLS)`);
 
-    // Upload do arquivo
+    // ✅ Upload com SERVICE_ROLE_KEY (funciona sem autenticação!)
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(filePath, file, {
         contentType: getContentType(fileExtension || ''),
-        upsert: false
+        upsert: true  // Permite sobrescrever se existir
       });
 
     if (error) {
-      console.error('[Supabase Storage] Upload error:', error);
+      console.error('[Supabase Storage] ❌ Erro no upload:', error);
       
       // Mensagem de erro amigável
       if (error.message.includes('not found')) {
-        throw new Error(`Bucket "${bucket}" não encontrado no Supabase Storage. Crie o bucket primeiro.`);
+        throw new Error(`Bucket "${bucket}" não encontrado. Crie o bucket 'images' no Supabase Storage!`);
       }
       
-      throw new Error(`Falha ao fazer upload: ${error.message}`);
+      throw new Error(`Falha no upload: ${error.message}`);
     }
 
-    console.log('[Supabase Storage] Upload concluído:', data);
+    console.log('[Supabase Storage] ✅ Upload concluído:', data);
 
     // Obter URL pública
     const { data: publicUrlData } = supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
 
-    console.log('[Supabase Storage] URL pública gerada:', publicUrlData.publicUrl);
+    console.log('[Supabase Storage] 🌐 URL pública:', publicUrlData.publicUrl);
 
     return {
       url: publicUrlData.publicUrl,
       path: filePath
     };
   } catch (error) {
-    console.error('[Supabase Storage] Error:', error);
+    console.error('[Supabase Storage] ❌ Error:', error);
     throw error;
   }
 }

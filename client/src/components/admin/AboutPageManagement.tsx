@@ -7,19 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Upload, Image as ImageIcon, Save } from "lucide-react";
 import { toast } from "sonner";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-const supabaseServiceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY || "";
-
-// Só cria o cliente Supabase se as credenciais estiverem configuradas
-const supabase = supabaseUrl && supabaseServiceRoleKey 
-  ? createClient(supabaseUrl, supabaseServiceRoleKey)
-  : null;
 
 export default function AboutPageManagement() {
   const { data: aboutPage, isLoading, refetch } = trpc.site.getAboutPage.useQuery();
   const updateAboutPage = trpc.admin.updateAboutPage.useMutation();
+  const uploadMutation = trpc.admin.uploadImage.useMutation();
 
   const [heroTitle, setHeroTitle] = useState("");
   const [heroBackgroundImage, setHeroBackgroundImage] = useState("");
@@ -46,31 +38,21 @@ export default function AboutPageManagement() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!supabase) {
-      toast.error("Supabase não está configurado. Configure VITE_SUPABASE_URL e VITE_SUPABASE_SERVICE_ROLE_KEY");
-      return;
-    }
-
     setUploadingHeroBg(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `hero-bg-${Date.now()}.${fileExt}`;
-      const filePath = `about/${fileName}`;
+      console.log("[About] 📤 Fazendo upload de imagem hero via backend...");
+      
+      // ✅ Usar tRPC para fazer upload via BACKEND (service_role_key)
+      const result = await uploadMutation.mutateAsync({
+        imageData: await fileToBase64(file),
+        originalName: file.name,
+        context: "about-hero"
+      });
 
-      const { error: uploadError, data } = await supabase.storage
-        .from("images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("images")
-        .getPublicUrl(filePath);
-
-      setHeroBackgroundImage(urlData.publicUrl);
+      setHeroBackgroundImage(result.url);
       toast.success("Imagem de fundo do hero enviada com sucesso!");
     } catch (error) {
-      console.error("Erro ao fazer upload:", error);
+      console.error("[About] ❌ Erro ao fazer upload:", error);
       toast.error("Erro ao enviar imagem");
     } finally {
       setUploadingHeroBg(false);
@@ -81,35 +63,35 @@ export default function AboutPageManagement() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!supabase) {
-      toast.error("Supabase não está configurado. Configure VITE_SUPABASE_URL e VITE_SUPABASE_SERVICE_ROLE_KEY");
-      return;
-    }
-
     setUploadingHistoryImg(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `history-${Date.now()}.${fileExt}`;
-      const filePath = `about/${fileName}`;
+      console.log("[About] 📤 Fazendo upload de imagem history via backend...");
+      
+      // ✅ Usar tRPC para fazer upload via BACKEND (service_role_key)
+      const result = await uploadMutation.mutateAsync({
+        imageData: await fileToBase64(file),
+        originalName: file.name,
+        context: "about-history"
+      });
 
-      const { error: uploadError, data } = await supabase.storage
-        .from("images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("images")
-        .getPublicUrl(filePath);
-
-      setHistoryImage(urlData.publicUrl);
+      setHistoryImage(result.url);
       toast.success("Imagem da equipe enviada com sucesso!");
     } catch (error) {
-      console.error("Erro ao fazer upload:", error);
+      console.error("[About] ❌ Erro ao fazer upload:", error);
       toast.error("Erro ao enviar imagem");
     } finally {
       setUploadingHistoryImg(false);
     }
+  };
+
+  // Helper: Converter File para Base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
   };
 
   const handleSubmit = async () => {
