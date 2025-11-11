@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import { Phone } from "lucide-react";
 
 export default function ChatWidget() {
   const { data: chatSettings } = trpc.admin.getChatSettings.useQuery();
   const [isVisible, setIsVisible] = useState(false);
+  const scriptInjectedRef = useRef(false); // Prevenir re-injeção
 
   const isEnabled = chatSettings?.enabled === 1;
 
@@ -16,33 +17,101 @@ export default function ChatWidget() {
 
   // Injetar script personalizado
   useEffect(() => {
-    if (isEnabled && chatSettings.type === "custom" && chatSettings.customScript) {
-      // Criar elemento script
-      const scriptContainer = document.createElement("div");
-      scriptContainer.innerHTML = chatSettings.customScript;
+    if (!isEnabled || chatSettings?.type !== "custom" || !chatSettings.customScript) {
+      return;
+    }
+
+    // ✅ Prevenir injeção duplicada (mesmo após hot reload)
+    if (scriptInjectedRef.current) {
+      console.log("[ChatWidget] Script já foi injetado nesta sessão, pulando");
+      return;
+    }
+
+    const existingWidget = document.getElementById("custom-chat-widget-container");
+    if (existingWidget) {
+      console.log("[ChatWidget] Widget já existe no DOM, pulando injeção");
+      scriptInjectedRef.current = true;
+      return;
+    }
+
+    console.log("[ChatWidget] 🚀 Injetando script personalizado...");
+    scriptInjectedRef.current = true;
+
+    // Criar container único para o widget
+    const container = document.createElement("div");
+    container.id = "custom-chat-widget-container";
+    container.setAttribute("data-chat-widget", "true");
+    
+    // Injetar HTML do script
+    container.innerHTML = chatSettings.customScript;
+    
+    // Adicionar ao body
+    document.body.appendChild(container);
+
+    // Extrair e executar scripts dentro do HTML
+    const scripts = container.getElementsByTagName("script");
+    const executedScripts: HTMLScriptElement[] = [];
+
+    Array.from(scripts).forEach((oldScript) => {
+      const newScript = document.createElement("script");
       
-      // Extrair e executar scripts
-      const scripts = scriptContainer.getElementsByTagName("script");
-      Array.from(scripts).forEach((oldScript) => {
-        const newScript = document.createElement("script");
-        Array.from(oldScript.attributes).forEach((attr) => {
-          newScript.setAttribute(attr.name, attr.value);
-        });
+      // Copiar atributos (src, type, etc.)
+      Array.from(oldScript.attributes).forEach((attr) => {
+        newScript.setAttribute(attr.name, attr.value);
+      });
+      
+      // Copiar conteúdo inline
+      if (oldScript.textContent) {
         newScript.textContent = oldScript.textContent;
-        document.body.appendChild(newScript);
+      }
+      
+      // Marcar script como injetado pelo widget
+      newScript.setAttribute("data-chat-widget-script", "true");
+      
+      // Substituir script antigo pelo novo (para executar)
+      oldScript.parentNode?.replaceChild(newScript, oldScript);
+      executedScripts.push(newScript);
+    });
+
+    console.log("[ChatWidget] ✅ Script injetado com sucesso");
+
+    // Cleanup ao desmontar componente
+    return () => {
+      console.log("[ChatWidget] 🧹 Limpando widget...");
+      scriptInjectedRef.current = false; // Permitir re-injeção após cleanup
+      
+      // Remover container principal
+      const containerToRemove = document.getElementById("custom-chat-widget-container");
+      if (containerToRemove) {
+        containerToRemove.remove();
+      }
+
+      // Remover scripts injetados
+      const injectedScripts = document.querySelectorAll('script[data-chat-widget-script="true"]');
+      injectedScripts.forEach(script => script.remove());
+
+      // Remover elementos de chatbot conhecidos
+      const chatbotSelectors = [
+        'ra-chatbot-widget',
+        '[id*="ra_wc_chatbot"]',
+        '[id*="chatbot"]',
+        '[class*="chatbot"]',
+        'iframe[src*="chatbot"]',
+        'iframe[src*="widget"]'
+      ];
+      
+      chatbotSelectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          // Só remover se foi criado pelo widget (não remover se já existia)
+          if (el.closest('[data-chat-widget="true"]') || !el.closest('body > *:not([data-chat-widget])')) {
+            el.remove();
+          }
+        });
       });
 
-      // Cleanup ao desmontar
-      return () => {
-        // Remover scripts injetados
-        const injectedScripts = document.querySelectorAll('script[src*="chatbot"], script[src*="widget"]');
-        injectedScripts.forEach(script => script.remove());
-        
-        // Remover elementos de widget
-        const chatbotElements = document.querySelectorAll('[id*="chatbot"], [id*="widget"], ra-chatbot-widget');
-        chatbotElements.forEach(el => el.remove());
-      };
-    }
+      console.log("[ChatWidget] ✅ Limpeza concluída");
+    };
   }, [chatSettings, isEnabled]);
 
   // Não renderizar se desabilitado ou se for script personalizado (já foi injetado)
