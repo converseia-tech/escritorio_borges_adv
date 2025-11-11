@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import { Loader2, Plus, Edit, Trash2, Upload, User, Calendar, Image as ImageIcon } from "lucide-react";
 import { format } from "date-fns";
 import RichTextEditor from "@/components/ui/RichTextEditor";
-import "react-quill/dist/quill.snow.css";
 
 export default function BlogsManagement() {
   const { data: blogs, isLoading, refetch } = trpc.admin.getAllBlogs.useQuery();
