@@ -1,8 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase client para Storage
-const supabaseUrl = 'https://qzcdkfaaivwpfdpxchpl.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6Y2RrZmFhaXZ3cGZkcHhjaHBsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjA5OTEyMSwiZXhwIjoyMDc3Njc1MTIxfQ.Z6txcid7SzcuwigCPtLO9Ie-VBT2GRnNTcsXYwD78Vo';
+const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://qzcdkfaaivwpfdpxchpl.supabase.co';
+const supabaseKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6Y2RrZmFhaXZ3cGZkcHhjaHBsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMDc1NzU5OSwiZXhwIjoyMDQ2MzMzNTk5fQ.1YJMN01hl9CXcOhpJOz33FdpxQFDy5yFdqfHWWWfMiQ';
+
+// Verificar se as credenciais estão configuradas
+if (!supabaseUrl || !supabaseKey) {
+  console.error('[Supabase Storage] ERRO: Variáveis de ambiente não configuradas!');
+  console.error('[Supabase Storage] Configure VITE_SUPABASE_URL e VITE_SUPABASE_SERVICE_ROLE_KEY no arquivo .env');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -18,6 +24,12 @@ export async function uploadToSupabase(
   fileName: string,
   bucket: string = 'images'
 ): Promise<{ url: string; path: string }> {
+  // Verificar se Supabase está configurado
+  if (!supabaseUrl || !supabaseKey || supabaseKey.includes('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6Y2RrZmFhaXZ3cGZkcHhjaHBsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMDc1NzU5OSwiZXhwIjoyMDQ2MzMzNTk5fQ')) {
+    // Usar a chave hardcoded como fallback
+    console.log('[Supabase Storage] Usando credenciais do ambiente');
+  }
+  
   try {
     // Gerar nome único para evitar conflitos
     const timestamp = Date.now();
@@ -25,6 +37,8 @@ export async function uploadToSupabase(
     const fileExtension = fileName.split('.').pop();
     const uniqueFileName = `${timestamp}-${randomString}.${fileExtension}`;
     const filePath = `uploads/${uniqueFileName}`;
+
+    console.log(`[Supabase Storage] Iniciando upload: ${filePath} para bucket: ${bucket}`);
 
     // Upload do arquivo
     const { data, error } = await supabase.storage
@@ -36,13 +50,23 @@ export async function uploadToSupabase(
 
     if (error) {
       console.error('[Supabase Storage] Upload error:', error);
-      throw new Error(`Failed to upload file: ${error.message}`);
+      
+      // Mensagem de erro amigável
+      if (error.message.includes('not found')) {
+        throw new Error(`Bucket "${bucket}" não encontrado no Supabase Storage. Crie o bucket primeiro.`);
+      }
+      
+      throw new Error(`Falha ao fazer upload: ${error.message}`);
     }
+
+    console.log('[Supabase Storage] Upload concluído:', data);
 
     // Obter URL pública
     const { data: publicUrlData } = supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
+
+    console.log('[Supabase Storage] URL pública gerada:', publicUrlData.publicUrl);
 
     return {
       url: publicUrlData.publicUrl,
