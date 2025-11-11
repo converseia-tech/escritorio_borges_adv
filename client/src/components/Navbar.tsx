@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
 import { Link } from "wouter";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const [areasDropdownOpen, setAreasDropdownOpen] = useState(false);
   const [equipeDropdownOpen, setEquipeDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Refs para timeouts de fechamento
   const areasTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -44,40 +46,50 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm">
-      <div className="container mx-auto px-6 py-6">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm">
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/">
-            <div className="flex items-center space-x-3 cursor-pointer">
+            <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer">
               {siteSettings?.logoUrl ? (
                 <img 
                   src={siteSettings.logoUrl} 
                   alt="Borges Advogados Associados" 
-                  className="h-20 w-auto md:h-24"
+                  className="h-16 sm:h-20 md:h-24 w-auto"
                 />
               ) : (
                 <div className="flex flex-col items-center">
-                  <div className="border-2 border-primary px-4 py-3">
-                    <span className="text-primary text-3xl md:text-4xl font-bold tracking-wider">BS</span>
+                  <div className="border-2 border-primary px-3 py-2 sm:px-4 sm:py-3">
+                    <span className="text-primary text-2xl sm:text-3xl md:text-4xl font-bold tracking-wider">BS</span>
                   </div>
-                  <span className="text-primary text-sm mt-1 tracking-widest">BORGES</span>
-                  <span className="text-white text-[10px] tracking-wider">ADVOGADOS ASSOCIADOS</span>
+                  <span className="text-primary text-xs sm:text-sm mt-1 tracking-widest">BORGES</span>
+                  <span className="text-white text-[8px] sm:text-[10px] tracking-wider">ADVOGADOS ASSOCIADOS</span>
                 </div>
               )}
             </div>
           </Link>
 
-          {/* Menu Items */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Botão Menu Mobile */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden text-white hover:text-primary hover:bg-white/10"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </Button>
+
+          {/* Menu Desktop */}
+          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <Link href="/">
-              <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide">
+              <span className="text-white hover:text-primary transition-colors cursor-pointer text-sm lg:text-base font-medium tracking-wide">
                 HOME
               </span>
             </Link>
 
             <Link href="/sobre">
-              <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide">
+              <span className="text-white hover:text-primary transition-colors cursor-pointer text-sm lg:text-base font-medium tracking-wide">
                 SOBRE NÓS
               </span>
             </Link>
@@ -88,9 +100,9 @@ export default function Navbar() {
               onMouseEnter={handleAreasMouseEnter}
               onMouseLeave={handleAreasMouseLeave}
             >
-              <button className="flex items-center text-white hover:text-primary transition-colors text-base font-medium tracking-wide">
+              <button className="flex items-center text-white hover:text-primary transition-colors text-sm lg:text-base font-medium tracking-wide">
                 ÁREAS DE ATUAÇÃO
-                <ChevronDown className="ml-1 h-5 w-5" />
+                <ChevronDown className="ml-1 h-4 w-4 lg:h-5 lg:w-5" />
               </button>
               
               {areasDropdownOpen && practiceAreas && practiceAreas.length > 0 && (
@@ -112,9 +124,9 @@ export default function Navbar() {
               onMouseEnter={handleEquipeMouseEnter}
               onMouseLeave={handleEquipeMouseLeave}
             >
-              <button className="flex items-center text-white hover:text-primary transition-colors text-base font-medium tracking-wide">
+              <button className="flex items-center text-white hover:text-primary transition-colors text-sm lg:text-base font-medium tracking-wide">
                 EQUIPE
-                <ChevronDown className="ml-1 h-5 w-5" />
+                <ChevronDown className="ml-1 h-4 w-4 lg:h-5 lg:w-5" />
               </button>
               
               {equipeDropdownOpen && teamMembers && teamMembers.length > 0 && (
@@ -131,18 +143,93 @@ export default function Navbar() {
             </div>
 
             <a href="/#contato">
-              <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide">
+              <span className="text-white hover:text-primary transition-colors cursor-pointer text-sm lg:text-base font-medium tracking-wide">
                 CONTATO
               </span>
             </a>
 
             <Link href="/blog">
-              <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide">
+              <span className="text-white hover:text-primary transition-colors cursor-pointer text-sm lg:text-base font-medium tracking-wide">
                 BLOG
               </span>
             </Link>
           </div>
         </div>
+
+        {/* Menu Mobile */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 py-4 border-t border-white/20 animate-in slide-in-from-top">
+            <div className="flex flex-col space-y-4">
+              <Link href="/" onClick={() => setMobileMenuOpen(false)}>
+                <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide block py-2">
+                  HOME
+                </span>
+              </Link>
+
+              <Link href="/sobre" onClick={() => setMobileMenuOpen(false)}>
+                <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide block py-2">
+                  SOBRE NÓS
+                </span>
+              </Link>
+
+              {/* Áreas de Atuação - Mobile */}
+              <div>
+                <button 
+                  onClick={() => setAreasDropdownOpen(!areasDropdownOpen)}
+                  className="flex items-center justify-between w-full text-white hover:text-primary transition-colors text-base font-medium tracking-wide py-2"
+                >
+                  ÁREAS DE ATUAÇÃO
+                  <ChevronDown className={`h-5 w-5 transition-transform ${areasDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {areasDropdownOpen && practiceAreas && practiceAreas.length > 0 && (
+                  <div className="mt-2 ml-4 space-y-2">
+                    {practiceAreas.map((area) => (
+                      <Link key={area.id} href={`/area/${area.slug}`} onClick={() => setMobileMenuOpen(false)}>
+                        <div className="text-gray-300 hover:text-primary cursor-pointer text-sm py-2">
+                          {area.title}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Equipe - Mobile */}
+              <div>
+                <button 
+                  onClick={() => setEquipeDropdownOpen(!equipeDropdownOpen)}
+                  className="flex items-center justify-between w-full text-white hover:text-primary transition-colors text-base font-medium tracking-wide py-2"
+                >
+                  EQUIPE
+                  <ChevronDown className={`h-5 w-5 transition-transform ${equipeDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {equipeDropdownOpen && teamMembers && teamMembers.length > 0 && (
+                  <div className="mt-2 ml-4 space-y-2 max-h-60 overflow-y-auto">
+                    {teamMembers.map((member) => (
+                      <Link key={member.id} href={`/equipe/${member.id}`} onClick={() => setMobileMenuOpen(false)}>
+                        <div className="text-gray-300 hover:text-primary cursor-pointer text-sm py-2">
+                          {member.name}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <a href="/#contato" onClick={() => setMobileMenuOpen(false)}>
+                <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide block py-2">
+                  CONTATO
+                </span>
+              </a>
+
+              <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
+                <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide block py-2">
+                  BLOG
+                </span>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

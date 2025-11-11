@@ -27,29 +27,44 @@ export default function HeroSection() {
         <div className="absolute -left-1/4 top-1/4 w-1/2 h-1/2 bg-yellow-500/10 blur-[100px] rounded-full animate-pulse-slow" />
       </div>
 
-      {/* Main Content - Aligned Left com backdrop blur */}
+      {/* Main Content - Aligned Left SEM caixa, apenas text-shadow */}
       <div className="relative z-10 px-6 md:px-12 lg:px-24 max-w-7xl w-full">
-        <div className="max-w-3xl backdrop-blur-sm bg-black/20 p-8 md:p-12 rounded-2xl border border-white/10 shadow-2xl">
-          <p className="text-yellow-500 text-base md:text-lg mb-4 tracking-widest font-semibold drop-shadow-lg">
+        <div className="max-w-3xl">
+          <p className="text-yellow-500 text-sm sm:text-base md:text-lg mb-4 tracking-widest font-bold uppercase"
+             style={{
+               textShadow: '0 2px 10px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.6), 0 0 30px rgba(234,179,8,0.3)'
+             }}>
             SEJA BEM-VINDO À
           </p>
           
-          <h1 className="text-white mb-2 drop-shadow-2xl">
-            <span className="block text-5xl md:text-7xl lg:text-8xl font-serif font-bold">
+          <h1 className="text-white mb-2">
+            <span className="block text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif font-bold"
+                  style={{
+                    textShadow: '0 4px 15px rgba(0,0,0,0.9), 0 8px 30px rgba(0,0,0,0.7), 0 2px 5px rgba(0,0,0,1)'
+                  }}>
               Borges
             </span>
-            <span className="block text-3xl md:text-4xl lg:text-5xl font-serif mt-2">
+            <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif mt-2"
+                  style={{
+                    textShadow: '0 3px 12px rgba(0,0,0,0.9), 0 6px 25px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,1)'
+                  }}>
               Advogados Associados
             </span>
           </h1>
           
-          <p className="text-white text-lg md:text-xl lg:text-2xl mb-8 mt-6 leading-relaxed drop-shadow-lg">
+          <p className="text-white text-base sm:text-lg md:text-xl lg:text-2xl mb-8 mt-6 leading-relaxed max-w-2xl"
+             style={{
+               textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 4px 15px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,1)'
+             }}>
             {heroContent?.subtitle || "Transformando desafios jurídicos complexos em soluções eficazes e personalizadas"}
           </p>
           
           <Button 
             size="lg"
-            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-base px-8 py-6 tracking-wider border-2 border-yellow-500 hover:border-yellow-600 transition-all shadow-xl hover:shadow-2xl hover:scale-105 hover:shadow-yellow-500/50"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-sm sm:text-base md:text-lg px-6 sm:px-8 py-4 sm:py-6 tracking-wider border-2 border-yellow-500 hover:border-yellow-600 transition-all shadow-2xl hover:shadow-yellow-500/50 hover:scale-105"
+            style={{
+              boxShadow: '0 4px 20px rgba(0,0,0,0.8), 0 8px 40px rgba(234,179,8,0.4)'
+            }}
             asChild
           >
             <a href={heroContent?.ctaLink || "/#contato"}>
