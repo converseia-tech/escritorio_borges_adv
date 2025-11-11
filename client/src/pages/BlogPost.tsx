@@ -142,15 +142,33 @@ export default function BlogPost() {
               <div
                 className="prose prose-lg max-w-none
                   prose-headings:font-bold prose-headings:text-gray-900
+                  prose-h1:text-4xl prose-h1:mt-12 prose-h1:mb-6 prose-h1:text-gray-900
                   prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-5 prose-h2:text-yellow-600
-                  prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
+                  prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-gray-800
                   prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-lg
                   prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6
                   prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6
-                  prose-li:text-gray-700 prose-li:mb-3 prose-li:text-lg
+                  prose-li:text-gray-700 prose-li:mb-3 prose-li:text-lg prose-li:leading-relaxed
                   prose-strong:text-gray-900 prose-strong:font-semibold
-                  prose-a:text-yellow-600 prose-a:no-underline hover:prose-a:underline
-                  prose-blockquote:border-l-yellow-600 prose-blockquote:bg-yellow-50 prose-blockquote:py-4 prose-blockquote:px-6"
+                  prose-em:text-gray-700 prose-em:italic
+                  prose-u:underline
+                  prose-a:text-yellow-600 prose-a:underline hover:prose-a:text-yellow-700
+                  prose-blockquote:border-l-4 prose-blockquote:border-l-yellow-600 prose-blockquote:bg-yellow-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:italic prose-blockquote:text-gray-700
+                  [&>div]:mb-4
+                  [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mt-12 [&_h1]:mb-6 [&_h1]:text-gray-900
+                  [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-5 [&_h2]:text-yellow-600
+                  [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mt-8 [&_h3]:mb-4 [&_h3]:text-gray-800
+                  [&_p]:text-gray-700 [&_p]:leading-relaxed [&_p]:mb-6 [&_p]:text-lg
+                  [&_ul]:my-6 [&_ul]:list-disc [&_ul]:pl-6
+                  [&_ol]:my-6 [&_ol]:list-decimal [&_ol]:pl-6
+                  [&_li]:text-gray-700 [&_li]:mb-3 [&_li]:text-lg [&_li]:leading-relaxed
+                  [&_strong]:text-gray-900 [&_strong]:font-semibold
+                  [&_b]:text-gray-900 [&_b]:font-semibold
+                  [&_em]:text-gray-700 [&_em]:italic
+                  [&_i]:text-gray-700 [&_i]:italic
+                  [&_u]:underline
+                  [&_a]:text-yellow-600 [&_a]:underline hover:[&_a]:text-yellow-700
+                  [&_blockquote]:border-l-4 [&_blockquote]:border-l-yellow-600 [&_blockquote]:bg-yellow-50 [&_blockquote]:py-4 [&_blockquote]:px-6 [&_blockquote]:italic [&_blockquote]:my-6"
                 dangerouslySetInnerHTML={{ __html: blog.content }}
               />
 
