@@ -199,131 +199,233 @@ export default function BlogsManagement() {
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Título *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => {
-                    const title = e.target.value;
-                    setFormData({
-                      ...formData,
-                      title,
-                      slug: generateSlug(title),
-                    });
-                  }}
-                  placeholder="Título do artigo"
-                  required
-                />
-              </div>
+              <Tabs defaultValue="conteudo" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="conteudo">Conteúdo</TabsTrigger>
+                  <TabsTrigger value="autor">Autor</TabsTrigger>
+                  <TabsTrigger value="imagens">Imagens</TabsTrigger>
+                </TabsList>
 
-              <div className="space-y-2">
-                <Label htmlFor="slug">Slug (URL) *</Label>
-                <Input
-                  id="slug"
-                  value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  placeholder="titulo-do-artigo"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="author">Autor</Label>
-                <Input
-                  id="author"
-                  value={formData.author}
-                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  placeholder="Nome do autor"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="excerpt">Resumo</Label>
-                <Textarea
-                  id="excerpt"
-                  value={formData.excerpt}
-                  onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                  placeholder="Breve resumo do artigo..."
-                  rows={2}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="content">Conteúdo *</Label>
-                <Textarea
-                  id="content"
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Conteúdo completo do artigo..."
-                  rows={10}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="featuredImage">Imagem Destacada</Label>
-                <p className="text-xs text-gray-500 mb-2">
-                  Adicione uma imagem de capa para o artigo (máximo 5MB)
-                </p>
-                
-                {/* Preview da imagem se existir */}
-                {formData.featuredImage && (
-                  <div className="relative mb-3 rounded-lg overflow-hidden border-2 border-gray-200">
-                    <img
-                      src={formData.featuredImage}
-                      alt="Preview"
-                      className="w-full h-48 object-cover"
+                {/* ABA 1: CONTEÚDO */}
+                <TabsContent value="conteudo" className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Título *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => {
+                        const title = e.target.value;
+                        setFormData({
+                          ...formData,
+                          title,
+                          slug: generateSlug(title),
+                        });
+                      }}
+                      placeholder="Título do artigo"
+                      required
                     />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      className="absolute top-2 right-2"
-                      onClick={() => setFormData({ ...formData, featuredImage: "" })}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
-                )}
-                
-                <div className="flex gap-2">
-                  <Input
-                    id="featuredImage"
-                    value={formData.featuredImage}
-                    onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-                    placeholder="Cole a URL da imagem ou faça upload"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={uploading}
-                    onClick={() => document.getElementById("blog-image-upload")?.click()}
-                    className="min-w-[120px]"
-                  >
-                    {uploading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload
-                      </>
-                    )}
-                  </Button>
-                  <input
-                    id="blog-image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleImageUpload(e, 'featuredImage')}
-                  />
-                </div>
-              </div>
 
-              <div className="flex items-center space-x-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="slug">Slug (URL) *</Label>
+                    <Input
+                      id="slug"
+                      value={formData.slug}
+                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                      placeholder="titulo-do-artigo"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="excerpt">Resumo</Label>
+                    <Textarea
+                      id="excerpt"
+                      value={formData.excerpt}
+                      onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                      placeholder="Breve resumo do artigo..."
+                      rows={2}
+                      spellCheck={true}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="content">Conteúdo * (com formatação rica)</Label>
+                    <p className="text-xs text-gray-500 mb-2">
+                      Use a barra de ferramentas para formatar o texto, adicionar títulos, listas, etc.
+                      O corretor ortográfico está ativo.
+                    </p>
+                    <RichTextEditor
+                      value={formData.content}
+                      onChange={(value) => setFormData({ ...formData, content: value })}
+                      placeholder="Escreva o conteúdo completo do artigo..."
+                    />
+                  </div>
+                </TabsContent>
+
+                {/* ABA 2: AUTOR */}
+                <TabsContent value="autor" className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="author">Nome do Autor</Label>
+                    <Input
+                      id="author"
+                      value={formData.author}
+                      onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                      placeholder="Ex: Dr. João Silva"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="authorBio">Biografia do Autor</Label>
+                    <Textarea
+                      id="authorBio"
+                      value={formData.authorBio}
+                      onChange={(e) => setFormData({ ...formData, authorBio: e.target.value })}
+                      placeholder="Breve biografia profissional do autor..."
+                      rows={4}
+                      spellCheck={true}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="authorPhoto">Foto do Autor</Label>
+                    <p className="text-xs text-gray-500 mb-2">
+                      Foto profissional do autor (máximo 5MB, preferencialmente quadrada)
+                    </p>
+                    
+                    {formData.authorPhoto && (
+                      <div className="relative mb-3 rounded-full overflow-hidden border-4 border-gray-200 w-32 h-32 mx-auto">
+                        <img
+                          src={formData.authorPhoto}
+                          alt="Foto do autor"
+                          className="w-full h-full object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-0 right-0 rounded-full"
+                          onClick={() => setFormData({ ...formData, authorPhoto: "" })}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                    
+                    <div className="flex gap-2">
+                      <Input
+                        id="authorPhoto"
+                        value={formData.authorPhoto}
+                        onChange={(e) => setFormData({ ...formData, authorPhoto: e.target.value })}
+                        placeholder="Cole a URL da foto ou faça upload"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={uploading}
+                        onClick={() => document.getElementById("author-photo-upload")?.click()}
+                        className="min-w-[120px]"
+                      >
+                        {uploading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Upload
+                          </>
+                        )}
+                      </Button>
+                      <input
+                        id="author-photo-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageUpload(e, 'authorPhoto')}
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+
+                {/* ABA 3: IMAGENS */}
+                <TabsContent value="imagens" className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="featuredImage">Imagem de Capa</Label>
+                    <p className="text-xs text-gray-500 mb-2">
+                      Imagem principal que aparecerá no topo do artigo (máximo 5MB)
+                    </p>
+                    
+                    {formData.featuredImage && (
+                      <div className="relative mb-3 rounded-lg overflow-hidden border-2 border-gray-200">
+                        <img
+                          src={formData.featuredImage}
+                          alt="Preview da capa"
+                          className="w-full h-64 object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-2 right-2"
+                          onClick={() => setFormData({ ...formData, featuredImage: "" })}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
+                    
+                    <div className="flex gap-2">
+                      <Input
+                        id="featuredImage"
+                        value={formData.featuredImage}
+                        onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
+                        placeholder="Cole a URL da imagem ou faça upload"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={uploading}
+                        onClick={() => document.getElementById("featured-image-upload")?.click()}
+                        className="min-w-[120px]"
+                      >
+                        {uploading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Upload
+                          </>
+                        )}
+                      </Button>
+                      <input
+                        id="featured-image-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageUpload(e, 'featuredImage')}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                      <ImageIcon className="h-5 w-5" />
+                      💡 Dica: Imagens no texto
+                    </h4>
+                    <p className="text-sm text-blue-800">
+                      Para inserir imagens dentro do conteúdo do artigo, use o editor de texto rico na aba "Conteúdo".
+                      Você pode fazer upload de imagens diretamente no editor ou colar URLs de imagens.
+                    </p>
+                  </div>
+                </TabsContent>
+              </Tabs>
+
+              <div className="flex items-center space-x-2 pt-4 border-t">
                 <Switch
                   id="published"
                   checked={formData.published === 1}

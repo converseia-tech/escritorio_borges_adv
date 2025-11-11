@@ -59,6 +59,13 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
         
         .rich-text-editor .ql-editor {
           min-height: 400px;
+          /* Ativa corretor ortográfico */
+          -webkit-user-select: text;
+          user-select: text;
+        }
+        
+        .rich-text-editor .ql-editor[contenteditable="true"] {
+          spellcheck: true;
         }
         
         .rich-text-editor .ql-editor h1 {

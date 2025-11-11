@@ -15,7 +15,8 @@ export default function BlogPost() {
   const { slug } = useParams();
   const { data: blogs } = trpc.site.getPublishedBlogs.useQuery();
   
-  const blog = blogs?.find((b) => b.slug === slug);
+  // TODO: Remover 'any' após executar migration 0006_add_author_fields.sql no Supabase
+  const blog: any = blogs?.find((b) => b.slug === slug);
 
   // Rastrear visualização do conteúdo do blog
   useEffect(() => {
@@ -152,6 +153,42 @@ export default function BlogPost() {
                   prose-blockquote:border-l-yellow-600 prose-blockquote:bg-yellow-50 prose-blockquote:py-4 prose-blockquote:px-6"
                 dangerouslySetInnerHTML={{ __html: blog.content }}
               />
+
+              {/* Informações do Autor */}
+              {(blog.author || blog.authorBio || blog.authorPhoto) && (
+                <div className="mt-12 pt-8 border-t-2 border-gray-100">
+                  <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6 md:p-8">
+                    <div className="flex flex-col md:flex-row gap-6 items-start">
+                      {/* Foto do Autor */}
+                      {blog.authorPhoto && (
+                        <div className="flex-shrink-0">
+                          <img
+                            src={blog.authorPhoto}
+                            alt={blog.author || "Autor"}
+                            className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                          />
+                        </div>
+                      )}
+                      
+                      {/* Informações Textuais */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-3">
+                          <User className="h-5 w-5 text-yellow-600" />
+                          <h3 className="text-xl font-bold text-gray-900">
+                            {blog.author || "Autor"}
+                          </h3>
+                        </div>
+                        
+                        {blog.authorBio && (
+                          <p className="text-gray-700 leading-relaxed">
+                            {blog.authorBio}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Call to Action */}
