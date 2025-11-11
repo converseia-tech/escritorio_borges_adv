@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "wouter";
 import { ChevronDown } from "lucide-react";
 import { trpc } from "@/lib/trpc";
@@ -6,10 +6,42 @@ import { trpc } from "@/lib/trpc";
 export default function Navbar() {
   const [areasDropdownOpen, setAreasDropdownOpen] = useState(false);
   const [equipeDropdownOpen, setEquipeDropdownOpen] = useState(false);
+  
+  // Refs para timeouts de fechamento
+  const areasTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const equipeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { data: practiceAreas } = trpc.site.getPracticeAreas.useQuery();
   const { data: teamMembers } = trpc.site.getTeamMembers.useQuery();
   const { data: siteSettings } = trpc.site.getSiteSettings.useQuery();
+
+  // Funções para controlar dropdown de áreas com delay
+  const handleAreasMouseEnter = () => {
+    if (areasTimeoutRef.current) {
+      clearTimeout(areasTimeoutRef.current);
+    }
+    setAreasDropdownOpen(true);
+  };
+
+  const handleAreasMouseLeave = () => {
+    areasTimeoutRef.current = setTimeout(() => {
+      setAreasDropdownOpen(false);
+    }, 300); // Delay de 300ms antes de fechar
+  };
+
+  // Funções para controlar dropdown de equipe com delay
+  const handleEquipeMouseEnter = () => {
+    if (equipeTimeoutRef.current) {
+      clearTimeout(equipeTimeoutRef.current);
+    }
+    setEquipeDropdownOpen(true);
+  };
+
+  const handleEquipeMouseLeave = () => {
+    equipeTimeoutRef.current = setTimeout(() => {
+      setEquipeDropdownOpen(false);
+    }, 300); // Delay de 300ms antes de fechar
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm">
@@ -53,8 +85,8 @@ export default function Navbar() {
             {/* Áreas de Atuação Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setAreasDropdownOpen(true)}
-              onMouseLeave={() => setAreasDropdownOpen(false)}
+              onMouseEnter={handleAreasMouseEnter}
+              onMouseLeave={handleAreasMouseLeave}
             >
               <button className="flex items-center text-white hover:text-primary transition-colors text-base font-medium tracking-wide">
                 ÁREAS DE ATUAÇÃO
@@ -77,8 +109,8 @@ export default function Navbar() {
             {/* Equipe Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setEquipeDropdownOpen(true)}
-              onMouseLeave={() => setEquipeDropdownOpen(false)}
+              onMouseEnter={handleEquipeMouseEnter}
+              onMouseLeave={handleEquipeMouseLeave}
             >
               <button className="flex items-center text-white hover:text-primary transition-colors text-base font-medium tracking-wide">
                 EQUIPE

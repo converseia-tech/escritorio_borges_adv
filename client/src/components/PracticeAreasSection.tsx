@@ -50,8 +50,9 @@ export default function PracticeAreasSection() {
           <h2 className="text-4xl md:text-5xl font-serif text-gray-900">Áreas de atuação</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {practiceAreas?.slice(0, 3).map((area) => {
+        {/* Grid responsivo que mostra todas as áreas sem necessidade de scroll */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          {practiceAreas?.map((area) => {
             const Icon = iconMap[area.icon || "briefcase"] || Briefcase;
             return (
               <Link key={area.id} href={`/area/${area.slug}`}>
@@ -63,15 +64,15 @@ export default function PracticeAreasSection() {
                     {/* Ícone com background circular */}
                     <div className="flex justify-center mb-6">
                       <div className="relative">
-                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-yellow-500/20 group-hover:to-yellow-600/20 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
-                          <Icon className="h-12 w-12 text-gray-700 group-hover:text-yellow-600 transition-all duration-300 group-hover:scale-110" strokeWidth={1.5} />
+                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-yellow-500/20 group-hover:to-yellow-600/20 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+                          <Icon className="h-10 w-10 text-gray-700 group-hover:text-yellow-600 transition-all duration-300 group-hover:scale-110" strokeWidth={1.5} />
                         </div>
                         {/* Anel externo animado */}
                         <div className="absolute inset-0 rounded-full border-2 border-yellow-500/0 group-hover:border-yellow-500/50 transition-all duration-300 group-hover:scale-125" />
                       </div>
                     </div>
                     
-                    <h3 className="text-xl font-serif text-center mb-4 text-gray-900 group-hover:text-yellow-600 transition-colors duration-300">
+                    <h3 className="text-lg font-serif text-center mb-3 text-gray-900 group-hover:text-yellow-600 transition-colors duration-300">
                       {area.title}
                     </h3>
                     <p className="text-sm text-gray-600 text-center line-clamp-3 group-hover:text-gray-800 transition-colors duration-300">
@@ -90,49 +91,6 @@ export default function PracticeAreasSection() {
             );
           })}
         </div>
-
-        {practiceAreas && practiceAreas.length > 3 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-8">
-            {practiceAreas.slice(3, 5).map((area) => {
-              const Icon = iconMap[area.icon || "briefcase"] || Briefcase;
-              return (
-                <Link key={area.id} href={`/area/${area.slug}`}>
-                  <div className="relative border-2 border-gray-200 p-8 hover:border-yellow-500 transition-all duration-300 cursor-pointer group h-full flex flex-col bg-white hover:shadow-2xl hover:-translate-y-2 overflow-hidden">
-                    {/* Efeito de brilho de fundo */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/0 via-yellow-500/0 to-yellow-500/0 group-hover:from-yellow-500/5 group-hover:via-yellow-500/10 group-hover:to-yellow-500/5 transition-all duration-500" />
-                    
-                    <div className="relative z-10">
-                      {/* Ícone com background circular */}
-                      <div className="flex justify-center mb-6">
-                        <div className="relative">
-                          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-yellow-500/20 group-hover:to-yellow-600/20 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
-                            <Icon className="h-12 w-12 text-gray-700 group-hover:text-yellow-600 transition-all duration-300 group-hover:scale-110" strokeWidth={1.5} />
-                          </div>
-                          {/* Anel externo animado */}
-                          <div className="absolute inset-0 rounded-full border-2 border-yellow-500/0 group-hover:border-yellow-500/50 transition-all duration-300 group-hover:scale-125" />
-                        </div>
-                      </div>
-                      
-                      <h3 className="text-xl font-serif text-center mb-4 text-gray-900 group-hover:text-yellow-600 transition-colors duration-300">
-                        {area.title}
-                      </h3>
-                      <p className="text-sm text-gray-600 text-center line-clamp-3 group-hover:text-gray-800 transition-colors duration-300">
-                        {area.description}
-                      </p>
-                      
-                      {/* Seta de "saiba mais" */}
-                      <div className="mt-4 flex justify-center">
-                        <span className="text-xs text-yellow-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold tracking-wider">
-                          SAIBA MAIS →
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
       </div>
     </section>
   );

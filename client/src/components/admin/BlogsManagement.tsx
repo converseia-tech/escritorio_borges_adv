@@ -7,8 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Plus, Edit, Trash2, Upload } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, Upload, User, Calendar } from "lucide-react";
+import { format } from "date-fns";
 
 export default function BlogsManagement() {
   const { data: blogs, isLoading, refetch } = trpc.admin.getAllBlogs.useQuery();
@@ -249,23 +251,54 @@ export default function BlogsManagement() {
 
               <div className="space-y-2">
                 <Label htmlFor="featuredImage">Imagem Destacada</Label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Adicione uma imagem de capa para o artigo (máximo 5MB)
+                </p>
+                
+                {/* Preview da imagem se existir */}
+                {formData.featuredImage && (
+                  <div className="relative mb-3 rounded-lg overflow-hidden border-2 border-gray-200">
+                    <img
+                      src={formData.featuredImage}
+                      alt="Preview"
+                      className="w-full h-48 object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={() => setFormData({ ...formData, featuredImage: "" })}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+                
                 <div className="flex gap-2">
                   <Input
                     id="featuredImage"
                     value={formData.featuredImage}
                     onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-                    placeholder="URL da imagem"
+                    placeholder="Cole a URL da imagem ou faça upload"
                   />
                   <Button
                     type="button"
                     variant="outline"
                     disabled={uploading}
                     onClick={() => document.getElementById("blog-image-upload")?.click()}
+                    className="min-w-[120px]"
                   >
                     {uploading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Enviando...
+                      </>
                     ) : (
-                      <Upload className="h-4 w-4" />
+                      <>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload
+                      </>
                     )}
                   </Button>
                   <input
@@ -276,13 +309,6 @@ export default function BlogsManagement() {
                     onChange={handleImageUpload}
                   />
                 </div>
-                {formData.featuredImage && (
-                  <img
-                    src={formData.featuredImage}
-                    alt="Preview"
-                    className="mt-2 h-32 w-full object-cover rounded"
-                  />
-                )}
               </div>
 
               <div className="flex items-center space-x-2">
@@ -318,44 +344,70 @@ export default function BlogsManagement() {
 
       <div className="grid grid-cols-1 gap-4">
         {blogs?.map((blog) => (
-          <Card key={blog.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-lg">{blog.title}</CardTitle>
-                  <CardDescription>
-                    {blog.author && `Por ${blog.author} • `}
-                    {blog.published === 1 ? (
-                      <span className="text-green-600">Publicado</span>
-                    ) : (
-                      <span className="text-gray-500">Rascunho</span>
-                    )}
-                  </CardDescription>
+          <Card key={blog.id} className="overflow-hidden">
+            <div className="flex flex-col md:flex-row">
+              {/* Thumbnail da imagem */}
+              {blog.featuredImage && (
+                <div className="md:w-48 h-32 md:h-auto flex-shrink-0">
+                  <img
+                    src={blog.featuredImage}
+                    alt={blog.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleOpenDialog(blog)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(blog.id)}
-                    disabled={deleteMutation.isPending}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+              )}
+              
+              <div className="flex-1">
+                <CardHeader>
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <CardTitle className="text-lg mb-2">{blog.title}</CardTitle>
+                      <CardDescription className="flex flex-wrap items-center gap-3">
+                        {blog.author && (
+                          <span className="flex items-center gap-1">
+                            <User className="h-3 w-3" />
+                            {blog.author}
+                          </span>
+                        )}
+                        {blog.publishedAt && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {format(new Date(blog.publishedAt), "dd/MM/yyyy")}
+                          </span>
+                        )}
+                        {blog.published === 1 ? (
+                          <Badge className="bg-green-600 hover:bg-green-700">Publicado</Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-gray-500 border-gray-400">Rascunho</Badge>
+                        )}
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenDialog(blog)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(blog.id)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 line-clamp-2">
+                    {blog.excerpt || blog.content.substring(0, 150) + "..."}
+                  </p>
+                </CardContent>
               </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 line-clamp-2">
-                {blog.excerpt || blog.content.substring(0, 150) + "..."}
-              </p>
-            </CardContent>
+            </div>
           </Card>
         ))}
       </div>
