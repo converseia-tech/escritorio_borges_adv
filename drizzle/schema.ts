@@ -141,6 +141,8 @@ export const blogs = pgTable("blogs", {
   excerpt: text("excerpt"),
   featuredImage: text("featured_image"),
   author: varchar("author", { length: 200 }),
+  authorBio: text("author_bio"), // Biografia do autor
+  authorPhoto: text("author_photo"), // Foto do autor
   published: smallint("published").notNull().default(0),
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

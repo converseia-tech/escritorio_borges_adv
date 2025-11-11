@@ -8,9 +8,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, Plus, Edit, Trash2, Upload, User, Calendar } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, Upload, User, Calendar, Image as ImageIcon } from "lucide-react";
 import { format } from "date-fns";
+import RichTextEditor from "@/components/ui/RichTextEditor";
+import "react-quill/dist/quill.snow.css";
 
 export default function BlogsManagement() {
   const { data: blogs, isLoading, refetch } = trpc.admin.getAllBlogs.useQuery();
@@ -24,6 +27,8 @@ export default function BlogsManagement() {
     excerpt: "",
     featuredImage: "",
     author: "",
+    authorBio: "",
+    authorPhoto: "",
     published: 0,
   });
 
@@ -43,6 +48,8 @@ export default function BlogsManagement() {
         excerpt: blog.excerpt || "",
         featuredImage: blog.featuredImage || "",
         author: blog.author || "",
+        authorBio: blog.authorBio || "",
+        authorPhoto: blog.authorPhoto || "",
         published: blog.published || 0,
       });
     } else {
@@ -54,6 +61,8 @@ export default function BlogsManagement() {
         excerpt: "",
         featuredImage: "",
         author: "",
+        authorBio: "",
+        authorPhoto: "",
         published: 0,
       });
     }
@@ -75,7 +84,7 @@ export default function BlogsManagement() {
       .replace(/\s+/g, "-");
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'featuredImage' | 'authorPhoto') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -90,14 +99,18 @@ export default function BlogsManagement() {
       reader.onload = async (event) => {
         const base64 = event.target?.result as string;
 
+        const context = field === 'featuredImage' 
+          ? `borges-advogados-blog-${formData.slug || "imagem"}`
+          : `borges-advogados-autor-${formData.author.toLowerCase().replace(/\s+/g, '-') || "foto"}`;
+
         const result = await uploadMutation.mutateAsync({
           imageData: base64,
           originalName: file.name,
-          context: `borges-advogados-blog-${formData.slug || "imagem"}`,
+          context,
         });
 
-        setFormData((prev) => ({ ...prev, featuredImage: result.url }));
-        toast.success("Imagem enviada com sucesso!");
+        setFormData((prev) => ({ ...prev, [field]: result.url }));
+        toast.success(field === 'featuredImage' ? "Capa enviada com sucesso!" : "Foto do autor enviada com sucesso!");
       };
       reader.readAsDataURL(file);
     } catch (error) {

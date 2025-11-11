@@ -65,12 +65,12 @@ export default function BlogPost() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen pt-32 pb-20 bg-gray-50">
+      <div className="min-h-screen pt-40 pb-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-6">
-          {/* Back Button */}
-          <div className="mb-8">
+          {/* Back Button com espaçamento adequado */}
+          <div className="mb-8 max-w-4xl mx-auto">
             <Link href="/blog">
-              <Button variant="ghost" size="sm" className="hover:bg-yellow-50 hover:text-yellow-600">
+              <Button variant="outline" className="hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-600 transition-all">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Voltar para o blog
               </Button>
