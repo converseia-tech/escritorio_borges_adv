@@ -158,7 +158,7 @@ export default function Navbar() {
 
         {/* Menu Mobile */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 py-4 border-t border-white/20 animate-in slide-in-from-top">
+          <div className="md:hidden mt-4 py-4 border-t border-white/20">
             <div className="flex flex-col space-y-4">
               <Link href="/" onClick={() => setMobileMenuOpen(false)}>
                 <span className="text-white hover:text-primary transition-colors cursor-pointer text-base font-medium tracking-wide block py-2">
