@@ -13,6 +13,7 @@ import AboutPageManagement from "@/components/admin/AboutPageManagement";
 import BlogsManagement from "@/components/admin/BlogsManagement";
 import SiteSettingsManagement from "@/components/admin/SiteSettingsManagement";
 import MarketingManagement from "@/components/admin/MarketingManagement";
+import StorageTest from "@/components/admin/StorageTest";
 
 export default function Admin() {
   const { user, loading, logout } = useAuth();
@@ -113,6 +114,7 @@ export default function Admin() {
             <TabsTrigger value="sobre">Sobre Nós (antigo)</TabsTrigger>
             <TabsTrigger value="pagina-sobre">Página Sobre</TabsTrigger>
             <TabsTrigger value="blogs">Blogs</TabsTrigger>
+            <TabsTrigger value="storage">Storage</TabsTrigger>
             <TabsTrigger value="marketing">Marketing & API</TabsTrigger>
             <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
           </TabsList>
@@ -205,6 +207,11 @@ export default function Admin() {
           {/* Blogs Tab */}
           <TabsContent value="blogs">
             <BlogsManagement />
+          </TabsContent>
+
+          {/* Storage Tab */}
+          <TabsContent value="storage">
+            <StorageTest />
           </TabsContent>
 
           {/* Marketing & API Tab */}

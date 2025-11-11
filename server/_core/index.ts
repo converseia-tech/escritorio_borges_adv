@@ -6,6 +6,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerUploadRoutes } from "../upload-routes";
 import { registerConfigRoutes } from "../config-routes";
+import { registerSupabaseTestRoutes } from "../storage-test-routes";
 import blogApiRouter from "../api-blog";
 import marketingConfigRouter from "../marketing-config";
 import supabaseTestRouter from "../supabase-test";
@@ -44,11 +45,14 @@ async function startServer() {
   
   // File upload routes
   registerUploadRoutes(app);
-  
   // Config routes (Supabase credentials)
   registerConfigRoutes(app);
   
+  // Storage test routes (verificar e criar bucket)
+  registerSupabaseTestRoutes(app);
+  
   // Supabase connection test
+  app.use("/api", supabaseTestRouter);
   app.use("/api", supabaseTestRouter);
   
   // Marketing configuration (Meta Pixel, GA4, API Key)

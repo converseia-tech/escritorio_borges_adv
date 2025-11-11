@@ -23,12 +23,22 @@ export function registerUploadRoutes(app: Express) {
   // Single file upload endpoint
   app.post("/api/upload", upload.single("file"), async (req: Request, res: Response) => {
     try {
+      console.log("[Upload] 📤 Recebendo arquivo...");
+      
       if (!req.file) {
+        console.error("[Upload] ❌ Nenhum arquivo recebido");
         return res.status(400).json({ error: "No file uploaded" });
       }
 
+      console.log("[Upload] 📄 Arquivo:", {
+        nome: req.file.originalname,
+        tamanho: `${(req.file.size / 1024).toFixed(2)} KB`,
+        tipo: req.file.mimetype
+      });
+
       // Get context from request body (optional)
       const context = req.body.context || "borges-advogados-site";
+      console.log("[Upload] 🏷️  Contexto:", context);
 
       // Upload to S3/storage
       const result = await uploadImage(
@@ -37,13 +47,15 @@ export function registerUploadRoutes(app: Express) {
         context
       );
 
+      console.log("[Upload] ✅ Upload concluído:", result.url);
+
       res.json({
         url: result.url,
         key: result.key,
         message: "File uploaded successfully",
       });
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error("[Upload] ❌ Erro no upload:", error);
       res.status(500).json({
         error: "Failed to upload file",
         message: error instanceof Error ? error.message : "Unknown error",
