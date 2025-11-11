@@ -53,6 +53,17 @@ async function startServer() {
     });
   });
   
+  // 🔥 Endpoint de diagnóstico de variáveis de ambiente
+  app.get("/api/debug/env", (req, res) => {
+    res.status(200).json({
+      DATABASE_URL: process.env.DATABASE_URL ? "✅ Configurada" : "❌ NÃO configurada",
+      SUPABASE_URL: process.env.SUPABASE_URL ? "✅ Configurada" : "❌ NÃO configurada",
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? "✅ Configurada" : "❌ NÃO configurada",
+      NODE_ENV: process.env.NODE_ENV || "production",
+      PORT: process.env.PORT || "3000"
+    });
+  });
+  
   console.log("[Server] ✅ Health check endpoint criado (/health)");
   
   // OAuth callback under /api/oauth/callback
