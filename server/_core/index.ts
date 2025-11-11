@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
-import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerUploadRoutes } from "../upload-routes";
@@ -14,29 +13,11 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 
-function isPortAvailable(port: number): Promise<boolean> {
-  return new Promise(resolve => {
-    const server = net.createServer();
-    server.listen(port, () => {
-      server.close(() => resolve(true));
-    });
-    server.on("error", () => resolve(false));
-  });
-}
-
-async function findAvailablePort(startPort: number = 3000): Promise<number> {
-  for (let port = startPort; port < startPort + 20; port++) {
-    if (await isPortAvailable(port)) {
-      return port;
-    }
-  }
-  throw new Error(`No available port found starting from ${startPort}`);
-}
-
 async function startServer() {
   console.log("[Server] 🚀 Iniciando servidor...");
   console.log("[Server] 📦 NODE_ENV:", process.env.NODE_ENV);
-  console.log("[Server] 🔌 PORT:", process.env.PORT || "3000 (default)");
+  console.log("[Server] 🔌 PORT:", process.env.PORT || "3000");
+  console.log("[Server] 🗄️  DATABASE_URL:", process.env.DATABASE_URL ? "✅ Configurada" : "❌ Não configurada");
   
   const app = express();
   const server = createServer(app);
@@ -52,11 +33,16 @@ async function startServer() {
     res.status(200).json({ 
       status: "ok", 
       timestamp: new Date().toISOString(),
-      uptime: process.uptime()
+      uptime: process.uptime(),
+      env: process.env.NODE_ENV || "production"
     });
   });
   
-  console.log("[Server] ✅ Health check endpoint criado");
+  app.get("/", (req, res) => {
+    res.status(200).send("Server is running! 🎉");
+  });
+  
+  console.log("[Server] ✅ Health check endpoints criados (/ e /health)");
   
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
@@ -107,12 +93,8 @@ async function startServer() {
     console.log("[Server] ✅ Arquivos estáticos configurados");
   }
 
-  const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
-
-  if (port !== preferredPort) {
-    console.log(`[Server] ⚠️  Port ${preferredPort} is busy, using port ${port} instead`);
-  }
+  // Use PORT from environment (Render sets this) or default to 3000
+  const port = parseInt(process.env.PORT || "3000", 10);
 
   server.listen(port, "0.0.0.0", () => {
     console.log(`[Server] 🎉 Server running on http://0.0.0.0:${port}/`);
