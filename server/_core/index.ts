@@ -12,12 +12,27 @@ import supabaseTestRouter from "../supabase-test";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { getDb } from "../db";
 
 async function startServer() {
   console.log("[Server] 🚀 Iniciando servidor...");
   console.log("[Server] 📦 NODE_ENV:", process.env.NODE_ENV);
   console.log("[Server] 🔌 PORT:", process.env.PORT || "3000");
   console.log("[Server] 🗄️  DATABASE_URL:", process.env.DATABASE_URL ? "✅ Configurada" : "❌ Não configurada");
+  
+  // 🔥 CONECTAR AO BANCO PRIMEIRO! (crítico para Render)
+  console.log("[Server] 🗄️  Inicializando conexão com banco de dados...");
+  try {
+    const db = await getDb();
+    if (db) {
+      console.log("[Server] ✅ Banco de dados conectado com sucesso!");
+    } else {
+      console.warn("[Server] ⚠️  Banco de dados não disponível - servidor continuará sem DB");
+    }
+  } catch (error) {
+    console.error("[Server] ❌ Erro ao conectar banco:", error);
+    console.warn("[Server] ⚠️  Servidor continuará mas funcionalidades do DB estarão indisponíveis");
+  }
   
   const app = express();
   const server = createServer(app);
@@ -123,10 +138,10 @@ async function startServer() {
 
 // Start with timeout protection
 const startTimeout = setTimeout(() => {
-  console.error("[Server] ❌ TIMEOUT: Server took too long to start (>60s)");
+  console.error("[Server] ❌ TIMEOUT: Server took too long to start (>30s)");
   console.error("[Server] Check DATABASE_URL and other env variables");
   process.exit(1);
-}, 60000); // 60 seconds
+}, 30000); // 🔥 30 segundos - falha rápido se algo der errado
 
 startServer()
   .then(() => {

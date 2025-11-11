@@ -15,16 +15,16 @@ export async function getDb() {
     
     try {
       _client = postgres(process.env.DATABASE_URL, {
-        max: 20, // Aumentado de 10 para 20 conexões
-        idle_timeout: 30, // Aumentado de 20 para 30 segundos
-        connect_timeout: 10, // Reduzido para 10 segundos (mais rápido falhar se não conectar)
-        max_lifetime: 60 * 60, // 1 hora - recicla conexões antigas
-        ssl: 'require', // Supabase requer SSL
-        prepare: false, // Desabilita prepared statements (melhor para pooling)
+        max: 20,
+        idle_timeout: 30,
+        connect_timeout: 5, // 🔥 REDUZIDO para 5 segundos - conecta RÁPIDO ou falha rápido
+        max_lifetime: 60 * 60,
+        ssl: 'require',
+        prepare: false,
         connection: {
           application_name: 'borges_advogados_web',
         },
-        onnotice: () => {}, // Silenciar avisos do postgres
+        onnotice: () => {},
       });
       
       _db = drizzle(_client);
