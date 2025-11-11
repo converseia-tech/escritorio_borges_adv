@@ -319,7 +319,7 @@ export default function BlogsManagement() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={handleImageUpload}
+                    onChange={(e) => handleImageUpload(e, 'featuredImage')}
                   />
                 </div>
               </div>
