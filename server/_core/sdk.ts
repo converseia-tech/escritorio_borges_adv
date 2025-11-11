@@ -287,7 +287,7 @@ class SDKServer {
         throw ForbiddenError("Failed to create local admin user");
       }
       
-      return adminUser;
+      return adminUser as { id: number; name: string | null; role: "user" | "admin"; email: string | null; openId: string; loginMethod: string | null; createdAt: Date; updatedAt: Date; lastSignedIn: Date; };
     }
     
     // Regular authentication flow
@@ -330,7 +330,7 @@ class SDKServer {
       lastSignedIn: signedInAt,
     });
 
-    return user;
+    return user as { id: number; name: string | null; role: "user" | "admin"; email: string | null; openId: string; loginMethod: string | null; createdAt: Date; updatedAt: Date; lastSignedIn: Date; };
   }
 }
 

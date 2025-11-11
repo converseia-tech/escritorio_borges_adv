@@ -1,6 +1,17 @@
-import { useRef, useMemo } from "react";
-import ReactQuill from "react-quill";
-import "quill/dist/quill.snow.css";
+import { useRef, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { 
+  Bold, 
+  Italic, 
+  Underline, 
+  List, 
+  ListOrdered, 
+  Heading1, 
+  Heading2, 
+  Heading3,
+  Quote,
+  Link as LinkIcon
+} from "lucide-react";
 
 interface RichTextEditorProps {
   value: string;
@@ -9,102 +20,196 @@ interface RichTextEditorProps {
 }
 
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
-  const quillRef = useRef<ReactQuill>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
-  // Configurações do toolbar
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, false] }],
-          ["bold", "italic", "underline", "strike"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          [{ indent: "-1" }, { indent: "+1" }],
-          [{ align: [] }],
-          ["blockquote", "code-block"],
-          ["link"],
-          ["clean"],
-        ],
-      },
-      clipboard: {
-        matchVisual: false,
-      },
-    }),
-    []
-  );
+  const execCommand = useCallback((command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
+  }, [onChange]);
 
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "align",
-    "blockquote",
-    "code-block",
-    "link",
-  ];
+  const handleInput = useCallback(() => {
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
+  }, [onChange]);
+
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    document.execCommand('insertText', false, text);
+  }, []);
+
+  const insertLink = useCallback(() => {
+    const url = prompt('Digite a URL:');
+    if (url) {
+      execCommand('createLink', url);
+    }
+  }, [execCommand]);
 
   return (
-    <div className="rich-text-editor">
+    <div className="rich-text-editor border rounded-lg overflow-hidden">
+      {/* Toolbar */}
+      <div className="flex flex-wrap gap-1 p-2 bg-gray-50 border-b">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('formatBlock', '<h1>')}
+          title="Título 1"
+        >
+          <Heading1 className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('formatBlock', '<h2>')}
+          title="Título 2"
+        >
+          <Heading2 className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('formatBlock', '<h3>')}
+          title="Título 3"
+        >
+          <Heading3 className="h-4 w-4" />
+        </Button>
+        
+        <div className="w-px h-6 bg-gray-300 mx-1" />
+        
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('bold')}
+          title="Negrito"
+        >
+          <Bold className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('italic')}
+          title="Itálico"
+        >
+          <Italic className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('underline')}
+          title="Sublinhado"
+        >
+          <Underline className="h-4 w-4" />
+        </Button>
+        
+        <div className="w-px h-6 bg-gray-300 mx-1" />
+        
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('insertUnorderedList')}
+          title="Lista"
+        >
+          <List className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('insertOrderedList')}
+          title="Lista Numerada"
+        >
+          <ListOrdered className="h-4 w-4" />
+        </Button>
+        
+        <div className="w-px h-6 bg-gray-300 mx-1" />
+        
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => execCommand('formatBlock', '<blockquote>')}
+          title="Citação"
+        >
+          <Quote className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={insertLink}
+          title="Link"
+        >
+          <LinkIcon className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* Editor Area */}
+      <div
+        ref={editorRef}
+        contentEditable
+        onInput={handleInput}
+        onPaste={handlePaste}
+        dangerouslySetInnerHTML={{ __html: value }}
+        className="min-h-[400px] p-4 outline-none prose prose-lg max-w-none focus:ring-2 focus:ring-yellow-500"
+        spellCheck
+        style={{
+          WebkitUserSelect: 'text',
+          userSelect: 'text',
+        }}
+      />
+
       <style>{`
-        .rich-text-editor .ql-container {
+        .rich-text-editor [contenteditable] {
           font-size: 16px;
-          font-family: inherit;
-          min-height: 400px;
+          line-height: 1.8;
         }
         
-        .rich-text-editor .ql-editor {
-          min-height: 400px;
-          /* Ativa corretor ortográfico */
-          -webkit-user-select: text;
-          user-select: text;
-        }
-        
-        .rich-text-editor .ql-editor[contenteditable="true"] {
-          spellcheck: true;
-        }
-        
-        .rich-text-editor .ql-editor h1 {
+        .rich-text-editor h1 {
           font-size: 2em;
           font-weight: bold;
           margin-top: 1.5em;
           margin-bottom: 0.5em;
         }
         
-        .rich-text-editor .ql-editor h2 {
+        .rich-text-editor h2 {
           font-size: 1.5em;
           font-weight: bold;
           margin-top: 1.2em;
           margin-bottom: 0.4em;
         }
         
-        .rich-text-editor .ql-editor h3 {
+        .rich-text-editor h3 {
           font-size: 1.25em;
           font-weight: bold;
           margin-top: 1em;
           margin-bottom: 0.3em;
         }
         
-        .rich-text-editor .ql-editor p {
+        .rich-text-editor p {
           margin-bottom: 1em;
-          line-height: 1.8;
         }
         
-        .rich-text-editor .ql-editor ul,
-        .rich-text-editor .ql-editor ol {
+        .rich-text-editor ul,
+        .rich-text-editor ol {
           margin-bottom: 1em;
           padding-left: 1.5em;
         }
         
-        .rich-text-editor .ql-editor li {
+        .rich-text-editor li {
           margin-bottom: 0.5em;
         }
         
-        .rich-text-editor .ql-editor blockquote {
+        .rich-text-editor blockquote {
           border-left: 4px solid #d97706;
           padding-left: 1em;
           margin: 1em 0;
@@ -113,31 +218,18 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
           padding: 1em;
         }
         
-        .rich-text-editor .ql-toolbar {
-          border-top-left-radius: 0.5rem;
-          border-top-right-radius: 0.5rem;
-          background-color: #f9fafb;
+        .rich-text-editor a {
+          color: #2563eb;
+          text-decoration: underline;
         }
         
-        .rich-text-editor .ql-container {
-          border-bottom-left-radius: 0.5rem;
-          border-bottom-right-radius: 0.5rem;
-        }
-        
-        .rich-text-editor .ql-editor.ql-blank::before {
+        .rich-text-editor [contenteditable]:empty:before {
+          content: attr(placeholder);
           color: #9ca3af;
-          font-style: normal;
+          pointer-events: none;
+          position: absolute;
         }
       `}</style>
-      <ReactQuill
-        ref={quillRef}
-        theme="snow"
-        value={value}
-        onChange={onChange}
-        modules={modules}
-        formats={formats}
-        placeholder={placeholder || "Escreva o conteúdo do artigo..."}
-      />
     </div>
   );
 }
