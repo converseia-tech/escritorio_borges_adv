@@ -137,4 +137,4 @@ export const CacheTTL = {
   MEDIUM: 5 * 60 * 1000, // 5 minutes - for moderately stable data
   LONG: 30 * 60 * 1000,  // 30 minutes - for stable data
   HOUR: 60 * 60 * 1000,  // 1 hour - for very stable data
-};
+} as const;
