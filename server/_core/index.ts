@@ -53,11 +53,7 @@ async function startServer() {
     });
   });
   
-  app.get("/", (req, res) => {
-    res.status(200).send("Server is running! 🎉");
-  });
-  
-  console.log("[Server] ✅ Health check endpoints criados (/ e /health)");
+  console.log("[Server] ✅ Health check endpoint criado (/health)");
   
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
