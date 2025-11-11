@@ -10,24 +10,36 @@ let _client: ReturnType<typeof postgres> | null = null;
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
+    console.log('[Database] 🔌 Connecting to PostgreSQL...');
+    console.log('[Database] 📍 Using DATABASE_URL:', process.env.DATABASE_URL.replace(/:[^:@]+@/, ':****@')); // Hide password
+    
     try {
       _client = postgres(process.env.DATABASE_URL, {
         max: 20, // Aumentado de 10 para 20 conexões
         idle_timeout: 30, // Aumentado de 20 para 30 segundos
-        connect_timeout: 30, // Aumentado de 10 para 30 segundos
+        connect_timeout: 10, // Reduzido para 10 segundos (mais rápido falhar se não conectar)
         max_lifetime: 60 * 60, // 1 hora - recicla conexões antigas
         ssl: 'require', // Supabase requer SSL
         prepare: false, // Desabilita prepared statements (melhor para pooling)
         connection: {
           application_name: 'borges_advogados_web',
         },
+        onnotice: () => {}, // Silenciar avisos do postgres
       });
+      
       _db = drizzle(_client);
+      
+      // Test connection
+      await _client`SELECT 1`;
+      
       console.log('[Database] ✅ Connected to PostgreSQL successfully');
-      console.log('[Database] Pool config: max=20, idle_timeout=30s, connect_timeout=30s');
-    } catch (error) {
-      console.error("[Database] ❌ Failed to connect:", error);
+      console.log('[Database] 📊 Pool config: max=20, idle_timeout=30s, connect_timeout=10s');
+    } catch (error: any) {
+      console.error("[Database] ❌ Failed to connect:", error.message || error);
+      console.error("[Database] ⚠️  Server will continue but database operations will fail");
       _db = null;
+      _client = null;
+      // NÃO fazer throw - deixar o servidor continuar sem DB
     }
   }
   return _db;
