@@ -176,3 +176,18 @@ export const siteSettings = pgTable("site_settings", {
 
 export type SiteSettings = typeof siteSettings.$inferSelect;
 export type InsertSiteSettings = typeof siteSettings.$inferInsert;
+
+// Configurações de Chat/Pop-up
+export const chatSettings = pgTable("chat_settings", {
+  id: serial("id").primaryKey(),
+  enabled: smallint("enabled").notNull().default(0), // 0 = false, 1 = true
+  type: varchar("type", { length: 20 }).notNull().default("whatsapp"), // "whatsapp" ou "custom"
+  whatsappNumber: varchar("whatsapp_number", { length: 20 }),
+  whatsappMessage: text("whatsapp_message"),
+  customScript: text("custom_script"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type ChatSettings = typeof chatSettings.$inferSelect;
+export type InsertChatSettings = typeof chatSettings.$inferInsert;

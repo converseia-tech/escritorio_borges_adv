@@ -14,6 +14,7 @@ import BlogsManagement from "@/components/admin/BlogsManagement";
 import SiteSettingsManagement from "@/components/admin/SiteSettingsManagement";
 import MarketingManagement from "@/components/admin/MarketingManagement";
 import StorageTest from "@/components/admin/StorageTest";
+import ChatManagement from "@/components/admin/ChatManagement";
 
 export default function Admin() {
   const { user, loading, logout } = useAuth();
@@ -114,6 +115,7 @@ export default function Admin() {
             <TabsTrigger value="sobre">Sobre Nós (antigo)</TabsTrigger>
             <TabsTrigger value="pagina-sobre">Página Sobre</TabsTrigger>
             <TabsTrigger value="blogs">Blogs</TabsTrigger>
+            <TabsTrigger value="chat">Chat</TabsTrigger>
             <TabsTrigger value="storage">Storage</TabsTrigger>
             <TabsTrigger value="marketing">Marketing & API</TabsTrigger>
             <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
@@ -207,6 +209,11 @@ export default function Admin() {
           {/* Blogs Tab */}
           <TabsContent value="blogs">
             <BlogsManagement />
+          </TabsContent>
+
+          {/* Chat Tab */}
+          <TabsContent value="chat">
+            <ChatManagement />
           </TabsContent>
 
           {/* Storage Tab */}

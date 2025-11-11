@@ -9,8 +9,9 @@ import {
   contactInfo,
   associatedLawyers,
   siteSettings,
-  blogs
-} from "../drizzle/schema-pg";
+  blogs,
+  chatSettings
+} from "../drizzle/schema";
 import { queryCache, CacheTTL } from "./query-cache";
 
 // Hero Content
@@ -164,4 +165,18 @@ export async function getBlogBySlug(slug: string) {
   if (!db) return null;
   const result = await db.select().from(blogs).where(eq(blogs.slug, slug)).limit(1);
   return result[0] || null;
+}
+
+// Chat Settings
+export async function getChatSettings() {
+  const db = await getDb();
+  if (!db) return null;
+  
+  try {
+    const result = await db.select().from(chatSettings).limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error('[DB Query] Error fetching chat settings:', error);
+    return null;
+  }
 }

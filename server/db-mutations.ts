@@ -10,7 +10,8 @@ import {
   associatedLawyers,
   siteSettings,
   blogs,
-} from "../drizzle/schema-pg";
+  chatSettings,
+} from "../drizzle/schema";
 import { queryCache } from "./query-cache";
 
 // =====================================================
@@ -284,4 +285,47 @@ export async function getAllBlogs() {
   if (!db) return [];
 
   return await db.select().from(blogs).orderBy(blogs.createdAt);
+}
+
+// =====================================================
+// CHAT SETTINGS MUTATIONS
+// =====================================================
+
+export async function updateChatSettings(data: {
+  enabled: boolean;
+  type: "whatsapp" | "custom";
+  whatsappNumber?: string;
+  whatsappMessage?: string;
+  customScript?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Converter boolean para number (0/1)
+  const dbData = {
+    ...data,
+    enabled: data.enabled ? 1 : 0,
+  };
+
+  // Verificar se já existe uma configuração
+  const existing = await db.select().from(chatSettings).limit(1);
+
+  if (existing.length > 0) {
+    // Atualizar configuração existente
+    const result = await db
+      .update(chatSettings)
+      .set({ ...dbData, updatedAt: new Date() })
+      .where(eq(chatSettings.id, existing[0].id))
+      .returning();
+    
+    return result[0];
+  } else {
+    // Criar nova configuração
+    const result = await db
+      .insert(chatSettings)
+      .values(dbData)
+      .returning();
+    
+    return result[0];
+  }
 }

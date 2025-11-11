@@ -337,6 +337,30 @@ export const appRouter = router({
         const { uploadImage } = await import("./image-upload");
         return await uploadImage(input.imageData, input.originalName, input.context);
       }),
+
+    // Chat Settings
+    getChatSettings: publicProcedure.query(async () => {
+      const { getChatSettings } = await import("./db-queries");
+      return await getChatSettings();
+    }),
+
+    updateChatSettings: protectedProcedure
+      .input(
+        z.object({
+          enabled: z.boolean(),
+          type: z.enum(["whatsapp", "custom"]),
+          whatsappNumber: z.string().optional(),
+          whatsappMessage: z.string().optional(),
+          customScript: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+        const { updateChatSettings } = await import("./db-mutations");
+        return await updateChatSettings(input);
+      }),
   }),
 });
 
