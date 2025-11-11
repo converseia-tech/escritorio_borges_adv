@@ -67,7 +67,8 @@ class QueryCache {
    */
   invalidatePattern(pattern: string): void {
     let count = 0;
-    for (const key of this.cache.keys()) {
+    const keysArray = Array.from(this.cache.keys());
+    for (const key of keysArray) {
       if (key.includes(pattern)) {
         this.cache.delete(key);
         count++;
@@ -94,7 +95,8 @@ class QueryCache {
     const now = Date.now();
     let cleaned = 0;
 
-    for (const [key, entry] of this.cache.entries()) {
+    const entriesArray = Array.from(this.cache.entries());
+    for (const [key, entry] of entriesArray) {
       if (now - entry.timestamp > entry.ttl) {
         this.cache.delete(key);
         cleaned++;
