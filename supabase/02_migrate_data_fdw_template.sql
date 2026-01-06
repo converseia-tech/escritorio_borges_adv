@@ -20,7 +20,7 @@
 --   port: 5432
 --   user: postgres (ou postgres.<project-ref>, depende do painel)
 --
--- ⚠️ Sem a SENHA do Postgres antigo, não tem como usar postgres_fdw.
+-- ⚠️ Sem a SENH do Postgres antigo, não tem como usar postgres_fdw.
 -- Se você ainda tem acesso ao painel do projeto antigo, faça:
 --   Settings -> Database -> Reset database password
 -- e use a senha nova na seção (3) abaixo.
