@@ -3,12 +3,13 @@ import { createClient } from '@supabase/supabase-js';
 // ⚠️ IMPORTANTE: Backend usa variáveis SEM VITE_ prefix!
 // VITE_ = Frontend (React) | SEM VITE_ = Backend (Node.js)
 const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+// Supabase atual usa "sb_secret_..." (secret key). Mantemos compat com nome antigo.
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || '';
 
 // Verificar se as credenciais estão configuradas
 if (!supabaseUrl || !supabaseKey) {
   console.error('[Supabase Storage] ❌ ERRO: Variáveis de ambiente não configuradas!');
-  console.error('[Supabase Storage] Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no arquivo .env');
+  console.error('[Supabase Storage] Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) no arquivo .env');
   console.error('[Supabase Storage] (SEM o prefixo VITE_ - isso é backend Node.js!)');
 }
 
@@ -39,7 +40,7 @@ export async function uploadToSupabase(
 ): Promise<{ url: string; path: string }> {
   // Verificar se Supabase está configurado
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase não configurado! Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no .env');
+    throw new Error('Supabase não configurado! Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_SECRET_KEY) no .env');
   }
   
   try {

@@ -9,7 +9,7 @@ export function registerSupabaseTestRoutes(app: Express) {
       
       // 1. Verificar variáveis de ambiente (SEM VITE_ no backend!)
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY;
       
       console.log("[Storage Test] 📋 Credenciais:");
       console.log("- URL:", supabaseUrl ? "✅ Configurada" : "❌ Não configurada");

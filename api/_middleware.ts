@@ -7,6 +7,6 @@ export const config = {
 console.log('[Vercel] Environment check:', {
   hasDatabaseUrl: !!process.env.DATABASE_URL,
   hasSupabaseUrl: !!process.env.SUPABASE_URL,
-  hasSupabaseKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+  hasSupabaseKey: !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY),
   nodeEnv: process.env.NODE_ENV,
 });
