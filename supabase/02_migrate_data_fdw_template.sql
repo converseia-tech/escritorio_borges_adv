@@ -29,7 +29,7 @@
 
 begin;
 
--- 1) Extensão
+-- 1) Extensã
 create extension if not exists postgres_fdw;
 
 -- 2) Conexão com o banco antigo
